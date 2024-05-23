@@ -1,0 +1,52 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: 'true'
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    name: ADMIN-SERVICE
+  datasource:
+    username: postgres
+    password: Pass@sales
+    url: jdbc:postgresql://localhost:5432/SecurityAnalyzer
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
+  orderfleet :
+    security:
+      authentication:
+        jwt:
+          # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+          base64-secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+          # Token is valid 24 hours
+          token-validity-in-seconds: 86400
+          token-validity-in-seconds-for-remember-me: 2592000
+#keycloak:
+#  auth-server-url: http://192.168.1.77:8080/
+#  realm: lead
+#  cors-allowed-methods: POST, PUT, DELETE, GET
+#  cors: 'true'
+#  cors-max-age: '0'
+#  bearer-only: 'true'
+#  ssl-required: none
+#  cors-allowed-headers: X-Requested-With, Content-Type, Authorization, Origin, Accept,
+#    Access-Control-Request-Method, Access-Control-Request-Headers
+#  resource: mod-c-admin
+#  principal-attribute: preferred_username
+#  public-client: 'true'
+#  use-resource-role-mappings: 'false'
+#user:
+#  keycloak:
+#    ip: 192.168.1.77
+#    auth-url: http://192.168.1.77:8080/realms/lead/protocol/openid-connect/token
+#    base-url : http://192.168.1.77:8080
+#    client-id: lead-admin
+#    grant_type: password
+#    realm: lead
+#    client_secret: jCDWXBMRG2YwdrSUsaHI9xYJn5Yvvilu
+server:
+  port: '8081'

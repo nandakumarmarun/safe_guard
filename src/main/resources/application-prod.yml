@@ -1,0 +1,61 @@
+admin:
+  keycloak:
+    password: easy
+    username: admin
+    client-id: mod-c-admin
+    client_secret: 42SiOxX3PPLrs9XZxy8ML7RimCx24BY6
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: 192.168.1.87:9092
+      group-id: adminId
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: 192.168.1.87:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      show-sql: 'true'
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    name: ADMIN-SERVISE
+  datasource:
+    password: ADMIN123SN
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/mod-c-admin-test
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+    baselineOnMigrate: true
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+keycloak:
+  auth-server-url: http://192.168.1.87:8080/
+  realm: mode-c
+  cors-allowed-methods: POST, PUT, DELETE, GET
+  cors: 'true'
+  cors-max-age: '0'
+  bearer-only: 'true'
+  ssl-required: none
+  cors-allowed-headers: X-Requested-With, Content-Type, Authorization, Origin, Accept,
+    Access-Control-Request-Method, Access-Control-Request-Headers
+  resource: mod-c-admin
+  principal-attribute: preferred_username
+  public-client: 'true'
+  use-resource-role-mappings: 'false'
+user:
+  keycloak:
+    ip: 192.168.1.87
+    client-id: mod-c-admin
+    grant_type: password
+    realm: mode-c
+    client_secret: ulMrSECt3nRcPhCSfg462Wuuacsoz8p2
+server:
+  port: '8081'
