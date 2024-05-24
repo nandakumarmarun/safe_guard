@@ -29,11 +29,16 @@ public class UserController {
 
 
     @PostMapping("/user/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest registerRequest)throws LoginAlreadyUsedException{
-        Optional<User> existingUser = userRepository.findOneByLogin(registerRequest.getLogin().toLowerCase());
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest)throws LoginAlreadyUsedException{
+        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(registerRequest.getEmail());
         if (existingUser.isPresent()) {
             System.out.println("throw new error ");
-            throw new LoginAlreadyUsedException();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already used!");
+        }
+         existingUser = userRepository.findOneByLogin(registerRequest.getLogin().toLowerCase());
+        if (existingUser.isPresent()) {
+            System.out.println("throw new error ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("username already used!");
         }
         return ResponseEntity.ok(authenticationService.register(registerRequest));
     }
