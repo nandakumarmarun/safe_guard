@@ -22,7 +22,7 @@ public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
 
-    public User register(RegisterRequest registerRequest) throws Exception{
+    public User register(RegisterRequest registerRequest){
         var user =  User.builder()
                 .firstName(registerRequest.getFirstName())
                 .lastName(registerRequest.getLastName())

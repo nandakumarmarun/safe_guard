@@ -10,7 +10,7 @@ spring:
     name: ADMIN-SERVICE
   datasource:
     username: postgres
-    password: Pass@sales
+    password: root
     url: jdbc:postgresql://localhost:5432/SecurityAnalyzer
   mvc:
     pathmatch:

@@ -2,6 +2,8 @@ package com.security.analyzer.v1.user;
 
 import com.security.analyzer.v1.Authentication.AuthenticationService;
 import com.security.analyzer.v1.Authentication.RegisterRequest;
+import com.security.analyzer.v1.exceptions.EmailAlreadyUsedException;
+import com.security.analyzer.v1.exceptions.LoginAlreadyUsedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +29,12 @@ public class UserController {
 
 
     @PostMapping("/user/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest registerRequest) throws Exception {
+    public ResponseEntity<User> register(@RequestBody RegisterRequest registerRequest)throws LoginAlreadyUsedException{
+        Optional<User> existingUser = userRepository.findOneByLogin(registerRequest.getLogin().toLowerCase());
+        if (existingUser.isPresent()) {
+            System.out.println("throw new error ");
+            throw new LoginAlreadyUsedException();
+        }
         return ResponseEntity.ok(authenticationService.register(registerRequest));
     }
 
@@ -46,11 +53,11 @@ public class UserController {
     ) {
         Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.orElseThrow().getId().equals(userDTO.getId()))) {
-//            throw new EmailAlreadyUsedException();
+            throw new EmailAlreadyUsedException();
         }
         existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.orElseThrow().getId().equals(userDTO.getId()))) {
-//            throw new LoginAlreadyUsedException();
+            throw new LoginAlreadyUsedException();
         }
         return ResponseEntity.ok(userService.updateUser(userDTO).get());
     }
