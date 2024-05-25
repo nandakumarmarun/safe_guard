@@ -29,7 +29,7 @@ public class CheckList implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "checkList")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL ,mappedBy = "checkList")
     private Set<CheckListItem> checkListItems = new HashSet<>();
 
     public Long getId() {

@@ -35,7 +35,8 @@ public class CheckListItem implements Serializable {
     @Column(name = "priority_level")
     private PriorityLevel priorityLevel;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "check_list_id")
     private CheckList checkList;
 
     public Long getId() {
