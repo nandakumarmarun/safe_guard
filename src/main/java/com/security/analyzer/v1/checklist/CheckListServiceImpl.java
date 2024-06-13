@@ -1,15 +1,12 @@
 package com.security.analyzer.v1.checklist;
 
-import com.security.analyzer.v1.checklistItem.CheckListItem;
-import com.security.analyzer.v1.checklistItem.CheckListItemDTO;
-import com.security.analyzer.v1.checklistItem.CheckListItemMapper;
+import com.security.analyzer.v1.checklistItem.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,6 +24,8 @@ public class CheckListServiceImpl implements CheckListService {
 
     private final CheckListRepository checkListRepository;
 
+    private final CheckListItemRepository checkListItemRepository;
+
     private final CheckListMapper checkListMapper;
 
     private final CheckListItemMapper checkListItemMapper;
@@ -38,24 +37,29 @@ public class CheckListServiceImpl implements CheckListService {
     }
 
     @Override
-    public CheckList save(CheckListRequestDTO checkListRequestDTO ) {
+    public CheckListResponseDTO save(CheckListRequestDTO checkListRequestDTO ) {
         CheckList checkList = checkListMapper.checkListRequestDTOToCheckList(checkListRequestDTO);
         Set<CheckListItem> checkListItems = checkListItemMapper
-            .checkListitemRequesDTOListToCheckListItemList(
+            .checkListitemCreateDTOListToCheckListItemList(
                 checkListRequestDTO.getCheckListItemDTO())
-            .stream()
-            .peek(checkListItem -> checkListItem.setCheckList(checkList)) // Set the CheckList for each CheckListItem
+            .stream()// Set the CheckList for each CheckListItem
             .collect(Collectors.toSet());
         checkList.setCheckListItems(checkListItems);
         CheckList respone = checkListRepository.save(checkList);
-        return respone;
+        List<CheckListItemResposeDTO> checkListItemResposeDTOS = checkListItemMapper.checkListitemListToCheckListItemResponseDTOList(respone.getCheckListItems().stream().toList());
+        CheckListResponseDTO checkListResponseDTO = checkListMapper.checkListToCheckListRequestDTO(respone);
+        checkListResponseDTO.setCheckListItemDTO(checkListItemResposeDTOS);
+        return checkListResponseDTO;
     }
 
 
     @Override
-    public CheckList update(CheckList checkList) {
-        log.debug("Request to update CheckList : {}", checkList);
-        return checkListRepository.save(checkList);
+    public CheckListResponseDTO update(CheckListUpdateDTO CheckListUpdateDTO) {
+        log.debug("Request to update CheckList : {}", CheckListUpdateDTO);
+        CheckList checkList = checkListMapper.checkListUpdateDTOToCheckList(CheckListUpdateDTO);
+        CheckList respone = checkListRepository.save(checkList);
+        CheckListResponseDTO checkListResponseDTO = checkListMapper.checkListToCheckListRequestDTO(respone);
+        return checkListResponseDTO;
     }
 
     @Override
@@ -76,9 +80,12 @@ public class CheckListServiceImpl implements CheckListService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CheckList> findAll() {
+    public List<CheckListResponseDTO> findAll() {
         log.debug("Request to get all CheckLists");
-        return checkListRepository.findAll();
+        List<CheckList> checkListAll = checkListRepository.findAll();
+        List<CheckListResponseDTO> checkListResponseDTO = checkListMapper
+                .checkListToCheckListRequestDTO(checkListAll);
+        return checkListResponseDTO;
     }
 
     @Override

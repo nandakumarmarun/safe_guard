@@ -15,15 +15,14 @@ public interface CheckListService {
      */
     CheckList save(CheckList checkList);
 
-    CheckList save(CheckListRequestDTO checkListRequestDTO);
+    CheckListResponseDTO save(CheckListRequestDTO checkListRequestDTO);
 
     /**
      * Updates a checkList.
      *
-     * @param checkList the entity to update.
-     * @return the persisted entity.
+     * @param CheckListUpdateDTO @return the persisted entity.
      */
-    CheckList update(CheckList checkList);
+    CheckListResponseDTO update(CheckListUpdateDTO CheckListUpdateDTO);
 
     /**
      * Partially updates a checkList.
@@ -38,7 +37,7 @@ public interface CheckListService {
      *
      * @return the list of entities.
      */
-    List<CheckList> findAll();
+    List<CheckListResponseDTO> findAll();
 
     /**
      * Get the "id" checkList.

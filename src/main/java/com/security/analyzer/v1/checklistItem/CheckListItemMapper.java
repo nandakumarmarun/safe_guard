@@ -9,7 +9,9 @@ import java.util.List;
 @Service
 public class CheckListItemMapper {
 
-    public CheckListItem checkListitemRequestDTOToCheckListItem(CheckListItemDTO checkListItemDTO) {
+
+
+    public CheckListItem checkListitemRequestDTOToCheckListItem(CheckListItemCreateDTO checkListItemDTO) {
         CheckListItem checkListItem = new CheckListItem();
         checkListItem.setName(checkListItemDTO.getChecklistItemName());
         checkListItem.setValue(checkListItemDTO.getValue());
@@ -17,7 +19,18 @@ public class CheckListItemMapper {
         return checkListItem;
     }
 
-    public  List<CheckListItem> checkListitemRequesDTOListToCheckListItemList(List<CheckListItemDTO> checkListItemDTO) {
+
+    public CheckListItem checkListitemUpdateDTOToCheckListItem(CheckListItemUpdateDTO checkListItemUpdateDTO) {
+        CheckListItem checkListItem = new CheckListItem();
+        checkListItem.setName(checkListItemUpdateDTO.getChecklistItemName());
+        checkListItem.setValue(checkListItemUpdateDTO.getValue());
+        checkListItem.setPriorityLevel(PriorityLevel.valueOf(checkListItemUpdateDTO.getPriorityLevel()));
+        return checkListItem;
+    }
+
+
+
+    public  List<CheckListItem> checkListitemCreateDTOListToCheckListItemList(List<CheckListItemCreateDTO> checkListItemDTO) {
         List<CheckListItem> checkListItems = new ArrayList<>();
         checkListItemDTO.forEach(data ->{
             CheckListItem checkListItem = new CheckListItem();
@@ -28,4 +41,30 @@ public class CheckListItemMapper {
         });
         return checkListItems;
     }
+
+
+    public  List<CheckListItemResposeDTO> checkListitemListToCheckListItemResponseDTOList(List<CheckListItem> checkListItem) {
+        List<CheckListItemResposeDTO> checkListItemResposeDTOS = new ArrayList<>();
+        checkListItem.forEach(data ->{
+            CheckListItemResposeDTO checkListItemResposeDTO = new CheckListItemResposeDTO();
+            checkListItemResposeDTO.setId(data.getId());
+            checkListItemResposeDTO.setChecklistItemName(data.getName());
+            checkListItemResposeDTO.setValue(data.getValue());
+            checkListItemResposeDTO.setPriorityLevel(data.getPriorityLevel().toString());
+            checkListItemResposeDTOS.add(checkListItemResposeDTO);
+        });
+        return checkListItemResposeDTOS;
+    }
+
+    public  CheckListItemResposeDTO checkListitemToCheckListItemResponseDTO(CheckListItem checkListItem) {
+            CheckListItemResposeDTO checkListItemResposeDTO = new CheckListItemResposeDTO();
+            checkListItemResposeDTO.setId(checkListItem.getId());
+            checkListItemResposeDTO.setChecklistItemName(checkListItem.getName());
+            checkListItemResposeDTO.setValue(checkListItem.getValue());
+            checkListItemResposeDTO.setPriorityLevel(checkListItem.getPriorityLevel().toString());
+        return checkListItemResposeDTO;
+    }
+
+
+
 }

@@ -35,9 +35,9 @@ public class CheckListItem implements Serializable {
     @Column(name = "priority_level")
     private PriorityLevel priorityLevel;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "check_list_id")
-    private CheckList checkList;
+//    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+//    @JoinColumn(name = "check_list_id")
+//    private CheckList checkList;
 
     public Long getId() {
         return this.id;
@@ -86,18 +86,18 @@ public class CheckListItem implements Serializable {
         this.priorityLevel = priorityLevel;
     }
 
-    public CheckList getCheckList() {
-        return this.checkList;
-    }
+//    public CheckList getCheckList() {
+//        return this.checkList;
+//    }
+//
+//    public void setCheckList(CheckList checkList) {
+//        this.checkList = checkList;
+//    }
 
-    public void setCheckList(CheckList checkList) {
-        this.checkList = checkList;
-    }
-
-    public CheckListItem checkList(CheckList checkList) {
-        this.setCheckList(checkList);
-        return this;
-    }
+//    public CheckListItem checkList(CheckList checkList) {
+//        this.setCheckList(checkList);
+//        return this;
+//    }
 
 
     @Override

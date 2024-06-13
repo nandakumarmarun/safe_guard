@@ -29,7 +29,9 @@ public class CheckList implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL ,mappedBy = "checkList")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "check_list_id")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<CheckListItem> checkListItems = new HashSet<>();
 
     public Long getId() {

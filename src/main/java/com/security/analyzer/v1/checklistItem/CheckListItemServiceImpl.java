@@ -1,5 +1,6 @@
 package com.security.analyzer.v1.checklistItem;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,15 +14,15 @@ import java.util.Optional;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CheckListItemServiceImpl implements CheckListItemService {
 
     private final Logger log = LoggerFactory.getLogger(CheckListItemServiceImpl.class);
 
     private final CheckListItemRepository checkListItemRepository;
 
-    public CheckListItemServiceImpl(CheckListItemRepository checkListItemRepository) {
-        this.checkListItemRepository = checkListItemRepository;
-    }
+    private final CheckListItemMapper checkListItemMapper;
+
 
     @Override
     public CheckListItem save(CheckListItem checkListItem) {
@@ -30,9 +31,11 @@ public class CheckListItemServiceImpl implements CheckListItemService {
     }
 
     @Override
-    public CheckListItem update(CheckListItem checkListItem) {
-        log.debug("Request to update CheckListItem : {}", checkListItem);
-        return checkListItemRepository.save(checkListItem);
+    public CheckListItemResposeDTO update(CheckListItemUpdateDTO checkListItemUpdateDTO) {
+        log.debug("Request to update CheckListItem : {}", checkListItemUpdateDTO);
+        checkListItemMapper.checkListitemUpdateDTOToCheckListItem(checkListItemUpdateDTO);
+        return checkListItemMapper.checkListitemToCheckListItemResponseDTO(checkListItemRepository
+            .save(checkListItemMapper.checkListitemUpdateDTOToCheckListItem(checkListItemUpdateDTO)));
     }
 
     @Override

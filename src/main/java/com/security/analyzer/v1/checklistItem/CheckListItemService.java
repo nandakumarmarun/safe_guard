@@ -18,10 +18,10 @@ public interface CheckListItemService {
     /**
      * Updates a checkListItem.
      *
-     * @param checkListItem the entity to update.
+     * @param checkListItemUpdateDTO the entity to update.
      * @return the persisted entity.
      */
-    CheckListItem update(CheckListItem checkListItem);
+    CheckListItemResposeDTO update(CheckListItemUpdateDTO checkListItemUpdateDTO);
 
     /**
      * Partially updates a checkListItem.

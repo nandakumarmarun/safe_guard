@@ -4,12 +4,11 @@ package com.security.analyzer.v1.checklistItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CheckListItemDTO {
+public class CheckListItemCreateDTO {
 
     private String ChecklistItemName;
 

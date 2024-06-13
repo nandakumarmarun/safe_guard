@@ -53,72 +53,33 @@ public class CheckListItemResource {
             .body(checkListItem);
     }
 
+
     /**
      * {@code PUT  /check-list-items/:id} : Updates an existing checkListItem.
      *
      * @param id the id of the checkListItem to save.
-     * @param checkListItem the checkListItem to update.
+     * @param checkListItemUpdateDTO the checkListItem to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated checkListItem,
      * or with status {@code 400 (Bad Request)} if the checkListItem is not valid,
      * or with status {@code 500 (Internal Server Error)} if the checkListItem couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CheckListItem> updateCheckListItem(
+    public ResponseEntity<CheckListItemResposeDTO> updateCheckListItem(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody CheckListItem checkListItem
+        @RequestBody CheckListItemUpdateDTO checkListItemUpdateDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update CheckListItem : {}, {}", id, checkListItem);
-        if (checkListItem.getId() == null) {
+        log.debug("REST request to update CheckListItem : {}, {}", id, checkListItemUpdateDTO);
+        if (checkListItemUpdateDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, checkListItem.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
         if (!checkListItemRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
-
-        checkListItem = checkListItemService.update(checkListItem);
-        return ResponseEntity.ok().body(checkListItem);
+        checkListItemUpdateDTO.setId(id);
+        return ResponseEntity.ok().body(checkListItemService.update(checkListItemUpdateDTO));
     }
 
-    /**
-     * {@code PATCH  /check-list-items/:id} : Partial updates given fields of an existing checkListItem, field will ignore if it is null
-     *
-     * @param id the id of the checkListItem to save.
-     * @param checkListItem the checkListItem to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated checkListItem,
-     * or with status {@code 400 (Bad Request)} if the checkListItem is not valid,
-     * or with status {@code 404 (Not Found)} if the checkListItem is not found,
-     * or with status {@code 500 (Internal Server Error)} if the checkListItem couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<?> partialUpdateCheckListItem(
-        @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody CheckListItem checkListItem
-    ) throws URISyntaxException {
-        log.debug("REST request to partial update CheckListItem partially : {}, {}", id, checkListItem);
-        if (checkListItem.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, checkListItem.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!checkListItemRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        Optional<CheckListItem> result = checkListItemService.partialUpdate(checkListItem);
-
-        if(result.isPresent()){
-            return ResponseEntity.ok(result.get());
-        }
-        return ResponseEntity.ok("Checklist Not Found");
-    }
 
     /**
      * {@code GET  /check-list-items} : get all the checkListItems.
@@ -130,6 +91,8 @@ public class CheckListItemResource {
         log.debug("REST request to get all CheckListItems");
         return checkListItemService.findAll();
     }
+
+
 
     /**
      * {@code GET  /check-list-items/:id} : get the "id" checkListItem.
@@ -147,6 +110,8 @@ public class CheckListItemResource {
         }
         return ResponseEntity.ok("Checklist Not Found");
     }
+
+
 
     /**
      * {@code DELETE  /check-list-items/:id} : delete the "id" checkListItem.

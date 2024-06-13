@@ -8,4 +8,4 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CheckListItemRepository extends JpaRepository<CheckListItem, Long> {}
+public interface CheckListItemRepository extends JpaRepository<CheckListItem, Long > {}
