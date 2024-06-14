@@ -37,7 +37,6 @@ public class TestCheckListItem implements Serializable {
     @JsonIgnoreProperties(value = { "testCheckListItems", "checkLists", "securityTest" }, allowSetters = true)
     private TestCheckList testCheckList;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
         return this.id;

@@ -26,14 +26,14 @@ public class CheckListMapper {
         return checkList;
     }
 
-    public CheckListResponseDTO checkListToCheckListRequestDTO(CheckList checkList) {
+    public CheckListResponseDTO checkListToCheckListResponseDTO(CheckList checkList) {
         CheckListResponseDTO checkListResponseDTO = new CheckListResponseDTO();
         checkListResponseDTO.setId(checkList.getId());
         checkListResponseDTO.setChecklistName(checkList.getName());
         return checkListResponseDTO;
     }
 
-    public List<CheckListResponseDTO> checkListToCheckListRequestDTO(List<CheckList> checkList) {
+    public List<CheckListResponseDTO> checkListToCheckListResponseDTO(List<CheckList> checkList) {
        List<CheckListResponseDTO> checkListResponseDTOs = new ArrayList<>();
         checkList.forEach(data->{
             CheckListResponseDTO checkListResponseDTO = new CheckListResponseDTO();

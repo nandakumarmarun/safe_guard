@@ -1,5 +1,9 @@
 package com.security.analyzer.v1.checklistItem;
 
+import com.security.analyzer.v1.checklist.CheckList;
+import com.security.analyzer.v1.checklist.CheckListMapper;
+import com.security.analyzer.v1.checklist.CheckListRepository;
+import com.security.analyzer.v1.checklist.CheckListResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +25,34 @@ public class CheckListItemServiceImpl implements CheckListItemService {
 
     private final CheckListItemRepository checkListItemRepository;
 
+    private final CheckListRepository checkListRepository;
+
+    private final CheckListMapper checkListMapper;
+
     private final CheckListItemMapper checkListItemMapper;
 
 
     @Override
-    public CheckListItem save(CheckListItem checkListItem) {
-        log.debug("Request to save CheckListItem : {}", checkListItem);
-        return checkListItemRepository.save(checkListItem);
+    public CheckListResponseDTO save(CheckListItemCreateDTO checkListItemCreateDTO) {
+        log.debug("Request to create CheckListItem : {}",
+            checkListItemCreateDTO.getChecklistItemName());
+
+        CheckListItem checkListItem = checkListItemMapper
+            .checkListitemCreateDTOToCheckListItem(checkListItemCreateDTO);
+
+        Optional<CheckList> optionalCheckList = checkListRepository
+            .findById(checkListItemCreateDTO.getCheckListId());
+
+        if(optionalCheckList.isPresent()) {
+            optionalCheckList
+                .get()
+                .getCheckListItems()
+                .add(checkListItem);
+            return checkListMapper
+                .checkListToCheckListResponseDTO(checkListRepository
+                    .save(optionalCheckList.get()));
+        }
+        return null;
     }
 
     @Override

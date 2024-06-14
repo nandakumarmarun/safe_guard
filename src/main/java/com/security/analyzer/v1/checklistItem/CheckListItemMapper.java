@@ -11,7 +11,7 @@ public class CheckListItemMapper {
 
 
 
-    public CheckListItem checkListitemRequestDTOToCheckListItem(CheckListItemCreateDTO checkListItemDTO) {
+    public CheckListItem checkListitemDTOToCheckListItem(CheckListItemDTO checkListItemDTO) {
         CheckListItem checkListItem = new CheckListItem();
         checkListItem.setName(checkListItemDTO.getChecklistItemName());
         checkListItem.setValue(checkListItemDTO.getValue());
@@ -22,15 +22,35 @@ public class CheckListItemMapper {
 
     public CheckListItem checkListitemUpdateDTOToCheckListItem(CheckListItemUpdateDTO checkListItemUpdateDTO) {
         CheckListItem checkListItem = new CheckListItem();
+        checkListItem.setId(checkListItemUpdateDTO.getId());
         checkListItem.setName(checkListItemUpdateDTO.getChecklistItemName());
         checkListItem.setValue(checkListItemUpdateDTO.getValue());
         checkListItem.setPriorityLevel(PriorityLevel.valueOf(checkListItemUpdateDTO.getPriorityLevel()));
         return checkListItem;
     }
 
+    public CheckListItem checkListitemCreateDTOToCheckListItem(CheckListItemCreateDTO checkListItemCreateDTO) {
+        CheckListItem checkListItem = new CheckListItem();
+        checkListItem.setName(checkListItemCreateDTO.getChecklistItemName());
+        checkListItem.setValue(checkListItemCreateDTO.getValue());
+        checkListItem.setPriorityLevel(PriorityLevel.valueOf(checkListItemCreateDTO.getPriorityLevel()));
+        return checkListItem;
+    }
 
 
-    public  List<CheckListItem> checkListitemCreateDTOListToCheckListItemList(List<CheckListItemCreateDTO> checkListItemDTO) {
+    public  CheckListItemResposeDTO checkListitemToCheckListItemResponseDTO(CheckListItem checkListItem) {
+        CheckListItemResposeDTO checkListItemResposeDTO = new CheckListItemResposeDTO();
+        checkListItemResposeDTO.setId(checkListItem.getId());
+        checkListItemResposeDTO.setChecklistItemName(checkListItem.getName());
+        checkListItemResposeDTO.setValue(checkListItem.getValue());
+        checkListItemResposeDTO.setPriorityLevel(checkListItem.getPriorityLevel().toString());
+        return checkListItemResposeDTO;
+    }
+
+
+
+
+    public  List<CheckListItem> checkListitemCreateDTOListToCheckListItemList(List<CheckListItemDTO> checkListItemDTO) {
         List<CheckListItem> checkListItems = new ArrayList<>();
         checkListItemDTO.forEach(data ->{
             CheckListItem checkListItem = new CheckListItem();
@@ -55,16 +75,4 @@ public class CheckListItemMapper {
         });
         return checkListItemResposeDTOS;
     }
-
-    public  CheckListItemResposeDTO checkListitemToCheckListItemResponseDTO(CheckListItem checkListItem) {
-            CheckListItemResposeDTO checkListItemResposeDTO = new CheckListItemResposeDTO();
-            checkListItemResposeDTO.setId(checkListItem.getId());
-            checkListItemResposeDTO.setChecklistItemName(checkListItem.getName());
-            checkListItemResposeDTO.setValue(checkListItem.getValue());
-            checkListItemResposeDTO.setPriorityLevel(checkListItem.getPriorityLevel().toString());
-        return checkListItemResposeDTO;
-    }
-
-
-
 }

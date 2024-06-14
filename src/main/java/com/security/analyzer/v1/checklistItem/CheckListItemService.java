@@ -1,5 +1,7 @@
 package com.security.analyzer.v1.checklistItem;
 
+import com.security.analyzer.v1.checklist.CheckListResponseDTO;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -10,10 +12,9 @@ public interface CheckListItemService {
     /**
      * Save a checkListItem.
      *
-     * @param checkListItem the entity to save.
-     * @return the persisted entity.
+     * @param checkListItemCreateDTO
      */
-    CheckListItem save(CheckListItem checkListItem);
+    CheckListResponseDTO save(CheckListItemCreateDTO checkListItemCreateDTO);
 
     /**
      * Updates a checkListItem.

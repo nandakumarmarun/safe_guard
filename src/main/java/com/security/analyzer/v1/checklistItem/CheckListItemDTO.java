@@ -8,14 +8,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CheckListItemCreateDTO {
+public class CheckListItemDTO {
 
     private String ChecklistItemName;
 
     private Double value;
 
     private String priorityLevel;
-
-    private Long checkListId;
-
 }

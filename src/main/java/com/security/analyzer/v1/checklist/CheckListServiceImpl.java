@@ -47,7 +47,7 @@ public class CheckListServiceImpl implements CheckListService {
         checkList.setCheckListItems(checkListItems);
         CheckList respone = checkListRepository.save(checkList);
         List<CheckListItemResposeDTO> checkListItemResposeDTOS = checkListItemMapper.checkListitemListToCheckListItemResponseDTOList(respone.getCheckListItems().stream().toList());
-        CheckListResponseDTO checkListResponseDTO = checkListMapper.checkListToCheckListRequestDTO(respone);
+        CheckListResponseDTO checkListResponseDTO = checkListMapper.checkListToCheckListResponseDTO(respone);
         checkListResponseDTO.setCheckListItemDTO(checkListItemResposeDTOS);
         return checkListResponseDTO;
     }
@@ -58,7 +58,7 @@ public class CheckListServiceImpl implements CheckListService {
         log.debug("Request to update CheckList : {}", CheckListUpdateDTO);
         CheckList checkList = checkListMapper.checkListUpdateDTOToCheckList(CheckListUpdateDTO);
         CheckList respone = checkListRepository.save(checkList);
-        CheckListResponseDTO checkListResponseDTO = checkListMapper.checkListToCheckListRequestDTO(respone);
+        CheckListResponseDTO checkListResponseDTO = checkListMapper.checkListToCheckListResponseDTO(respone);
         return checkListResponseDTO;
     }
 
@@ -84,7 +84,7 @@ public class CheckListServiceImpl implements CheckListService {
         log.debug("Request to get all CheckLists");
         List<CheckList> checkListAll = checkListRepository.findAll();
         List<CheckListResponseDTO> checkListResponseDTO = checkListMapper
-                .checkListToCheckListRequestDTO(checkListAll);
+                .checkListToCheckListResponseDTO(checkListAll);
         return checkListResponseDTO;
     }
 

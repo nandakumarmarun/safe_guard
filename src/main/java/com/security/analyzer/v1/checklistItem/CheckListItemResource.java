@@ -1,17 +1,15 @@
 package com.security.analyzer.v1.checklistItem;
 
 
+import com.security.analyzer.v1.checklist.CheckListResponseDTO;
 import com.security.analyzer.v1.exceptions.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -20,40 +18,36 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/check-list-items")
 public class CheckListItemResource {
-
     private final Logger log = LoggerFactory.getLogger(CheckListItemResource.class);
-
     private static final String ENTITY_NAME = "checkListItem";
-
-
     private final CheckListItemService checkListItemService;
-
     private final CheckListItemRepository checkListItemRepository;
 
-    public CheckListItemResource(CheckListItemService checkListItemService, CheckListItemRepository checkListItemRepository) {
+
+    public CheckListItemResource(
+        CheckListItemService checkListItemService,
+        CheckListItemRepository checkListItemRepository) {
         this.checkListItemService = checkListItemService;
         this.checkListItemRepository = checkListItemRepository;
     }
-
     /**
      * {@code POST  /check-list-items} : Create a new checkListItem.
      *
-     * @param checkListItem the checkListItem to create.
+     * @param checkListItemUpdateDTO the checkListItem to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new checkListItem, or with status {@code 400 (Bad Request)} if the checkListItem has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<CheckListItem> createCheckListItem(@RequestBody CheckListItem checkListItem) throws URISyntaxException {
-        log.debug("REST request to save CheckListItem : {}", checkListItem);
-        if (checkListItem.getId() != null) {
-            throw new BadRequestAlertException("A new checkListItem cannot already have an ID", ENTITY_NAME, "idexists");
+    public ResponseEntity<CheckListResponseDTO> createCheckListItem(
+        @RequestBody CheckListItemCreateDTO checkListItemCreateDTO) throws URISyntaxException {
+        log.debug("REST request to save CheckListItem : {}", checkListItemCreateDTO);
+        CheckListResponseDTO checkListResponseDTO = checkListItemService.save(checkListItemCreateDTO);
+        if(checkListResponseDTO.getId() !=  null){
+            return ResponseEntity.created(new URI("/api/check-list-items/" + checkListResponseDTO.getId()))
+                .body(checkListResponseDTO);
         }
-        checkListItem = checkListItemService.save(checkListItem);
-        return ResponseEntity.created(new URI("/api/check-list-items/" + checkListItem.getId()))
-            .body(checkListItem);
+        return ResponseEntity.badRequest().body(null);
     }
-
-
     /**
      * {@code PUT  /check-list-items/:id} : Updates an existing checkListItem.
      *
@@ -79,21 +73,6 @@ public class CheckListItemResource {
         checkListItemUpdateDTO.setId(id);
         return ResponseEntity.ok().body(checkListItemService.update(checkListItemUpdateDTO));
     }
-
-
-    /**
-     * {@code GET  /check-list-items} : get all the checkListItems.
-     *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of checkListItems in body.
-     */
-    @GetMapping("")
-    public List<CheckListItem> getAllCheckListItems() {
-        log.debug("REST request to get all CheckListItems");
-        return checkListItemService.findAll();
-    }
-
-
-
     /**
      * {@code GET  /check-list-items/:id} : get the "id" checkListItem.
      *
@@ -110,9 +89,6 @@ public class CheckListItemResource {
         }
         return ResponseEntity.ok("Checklist Not Found");
     }
-
-
-
     /**
      * {@code DELETE  /check-list-items/:id} : delete the "id" checkListItem.
      *
@@ -126,3 +102,6 @@ public class CheckListItemResource {
         return ResponseEntity.noContent().build();
     }
 }
+
+
+
