@@ -42,6 +42,9 @@ public class SecurityTest implements Serializable {
     @Column(name = "test_status")
     private String testStatus;
 
+    @Column(name = "test_Description")
+    private String testDescription;
+
     @Column(name = "test_score")
     private Double testScore;
 
@@ -49,9 +52,10 @@ public class SecurityTest implements Serializable {
     @Column(name = "security_level")
     private SecurityLevel securityLevel;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "securityTest")
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "security_test_id")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "testCheckListItems", "securityTest", "checkList" }, allowSetters = true)
     private Set<TestCheckList> testCheckLists = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -160,30 +164,15 @@ public class SecurityTest implements Serializable {
     }
 
     public void setTestCheckLists(Set<TestCheckList> testCheckLists) {
-        if (this.testCheckLists != null) {
-            this.testCheckLists.forEach(i -> i.setSecurityTest(null));
-        }
-        if (testCheckLists != null) {
-            testCheckLists.forEach(i -> i.setSecurityTest(this));
-        }
         this.testCheckLists = testCheckLists;
     }
 
-    public SecurityTest testCheckLists(Set<TestCheckList> testCheckLists) {
-        this.setTestCheckLists(testCheckLists);
-        return this;
+    public String getTestDescription() {
+        return testDescription;
     }
 
-    public SecurityTest addTestCheckList(TestCheckList testCheckList) {
-        this.testCheckLists.add(testCheckList);
-        testCheckList.setSecurityTest(this);
-        return this;
-    }
-
-    public SecurityTest removeTestCheckList(TestCheckList testCheckList) {
-        this.testCheckLists.remove(testCheckList);
-        testCheckList.setSecurityTest(null);
-        return this;
+    public void setTestDescription(String testDescription) {
+        this.testDescription = testDescription;
     }
 
     public User getApplicationUser() {

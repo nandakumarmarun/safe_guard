@@ -29,11 +29,11 @@ public class TestCheckList implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "testCheckList")
-    private Set<TestCheckListItem> testCheckListItems = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private SecurityTest securityTest;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "test_check_list_id")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<TestCheckListItem> testCheckListItems = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     private CheckList checkList;
@@ -66,24 +66,24 @@ public class TestCheckList implements Serializable {
     }
 
 
-    public TestCheckList removeTestCheckListItem(TestCheckListItem testCheckListItem) {
-        this.testCheckListItems.remove(testCheckListItem);
-        testCheckListItem.setTestCheckList(null);
-        return this;
-    }
+//    public TestCheckList removeTestCheckListItem(TestCheckListItem testCheckListItem) {
+//        this.testCheckListItems.remove(testCheckListItem);
+//        testCheckListItem.setTestCheckList(null);
+//        return this;
+//    }
 
-    public SecurityTest getSecurityTest() {
-        return this.securityTest;
-    }
+//    public SecurityTest getSecurityTest() {
+//        return this.securityTest;
+//    }
+//
+//    public void setSecurityTest(SecurityTest securityTest) {
+//        this.securityTest = securityTest;
+//    }
 
-    public void setSecurityTest(SecurityTest securityTest) {
-        this.securityTest = securityTest;
-    }
-
-    public TestCheckList securityTest(SecurityTest securityTest) {
-        this.setSecurityTest(securityTest);
-        return this;
-    }
+//    public TestCheckList securityTest(SecurityTest securityTest) {
+//        this.setSecurityTest(securityTest);
+//        return this;
+//    }
 
     public CheckList getCheckList() {
         return this.checkList;

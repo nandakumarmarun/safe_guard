@@ -13,9 +13,7 @@ import java.util.List;
 public class CheckListResponseDTO {
 
     private Long id;
-
     private String checklistName;
-
     private List<CheckListItemResposeDTO> checkListItemDTO;
 
 }

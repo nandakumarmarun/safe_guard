@@ -2,6 +2,7 @@ package com.security.analyzer.v1.user;
 
 import com.security.analyzer.v1.Authentication.AuthenticationService;
 import com.security.analyzer.v1.Authentication.RegisterRequest;
+import com.security.analyzer.v1.checklist.CheckList;
 import com.security.analyzer.v1.exceptions.EmailAlreadyUsedException;
 import com.security.analyzer.v1.exceptions.LoginAlreadyUsedException;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,8 @@ public class UserController {
             @PathVariable(name = "login", required = false)  String login,@RequestBody UserDTO userDTO
     ) {
         Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
+
+        CheckList checkList = new CheckList();
         if (existingUser.isPresent() && (!existingUser.orElseThrow().getId().equals(userDTO.getId()))) {
             throw new EmailAlreadyUsedException();
         }

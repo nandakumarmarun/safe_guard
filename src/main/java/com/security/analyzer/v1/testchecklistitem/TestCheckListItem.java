@@ -33,11 +33,6 @@ public class TestCheckListItem implements Serializable {
     @JsonIgnoreProperties(value = { "checkList" }, allowSetters = true)
     private CheckListItem checklistitem;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "testCheckListItems", "checkLists", "securityTest" }, allowSetters = true)
-    private TestCheckList testCheckList;
-
-
     public Long getId() {
         return this.id;
     }
@@ -77,18 +72,18 @@ public class TestCheckListItem implements Serializable {
         return this;
     }
 
-    public TestCheckList getTestCheckList() {
-        return this.testCheckList;
-    }
+//    public TestCheckList getTestCheckList() {
+//        return this.testCheckList;
+//    }
+//
+//    public void setTestCheckList(TestCheckList testCheckList) {
+//        this.testCheckList = testCheckList;
+//    }
 
-    public void setTestCheckList(TestCheckList testCheckList) {
-        this.testCheckList = testCheckList;
-    }
-
-    public TestCheckListItem testCheckList(TestCheckList testCheckList) {
-        this.setTestCheckList(testCheckList);
-        return this;
-    }
+//    public TestCheckListItem testCheckList(TestCheckList testCheckList) {
+//        this.setTestCheckList(testCheckList);
+//        return this;
+//    }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
