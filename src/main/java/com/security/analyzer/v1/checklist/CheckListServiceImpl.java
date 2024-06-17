@@ -56,10 +56,18 @@ public class CheckListServiceImpl implements CheckListService {
     @Override
     public CheckListResponseDTO update(CheckListUpdateDTO CheckListUpdateDTO) {
         log.debug("Request to update CheckList : {}", CheckListUpdateDTO);
-        CheckList checkList = checkListMapper.checkListUpdateDTOToCheckList(CheckListUpdateDTO);
-        CheckList respone = checkListRepository.save(checkList);
-        CheckListResponseDTO checkListResponseDTO = checkListMapper.checkListToCheckListResponseDTO(respone);
-        return checkListResponseDTO;
+//        CheckList checkList = checkListMapper.checkListUpdateDTOToCheckList(CheckListUpdateDTO);
+        Optional<CheckList> optionalCheckList = checkListRepository.findById(CheckListUpdateDTO.getId());
+        if(optionalCheckList.isPresent()){
+            CheckList checkList = optionalCheckList.get();
+            checkList.setId(CheckListUpdateDTO.getId());
+            checkList.setName(CheckListUpdateDTO.getChecklistName());
+            checkList.setCheckListItems(optionalCheckList.get().getCheckListItems());
+            CheckList respone = checkListRepository.save(checkList);
+            CheckListResponseDTO checkListResponseDTO = checkListMapper.checkListToCheckListResponseDTO(respone);
+            return checkListResponseDTO;
+        }
+        return null;
     }
 
     @Override

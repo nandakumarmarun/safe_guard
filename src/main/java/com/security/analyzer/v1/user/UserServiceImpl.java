@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDTO.getEmail().toLowerCase());
         }
         user.setImageUrl(userDTO.getImageUrl());
-        String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
+        String encryptedPassword = userDTO.getPassword();
         user.setPassword(encryptedPassword);
         user.setActivated(true);
         userRepository.save(user);

@@ -7,6 +7,7 @@ import com.security.analyzer.v1.checklistItem.CheckListItem;
 import com.security.analyzer.v1.checklistItem.CheckListItemRepository;
 import com.security.analyzer.v1.company.Company;
 import com.security.analyzer.v1.company.CompanyRepository;
+import com.security.analyzer.v1.config.utils.SecurityUtils;
 import com.security.analyzer.v1.testchecklist.TestCheckList;
 import com.security.analyzer.v1.testchecklist.TestCheckListDTO;
 import com.security.analyzer.v1.testchecklistitem.TestCheckListItem;
@@ -51,7 +52,8 @@ public class SecurityTestServiceImpl implements SecurityTestService {
         List<CheckListItem> checkListItems = checkListItemRepository.findAll();
         List<CheckList> checkListLists = checkListRepository.findAll();
         Optional<Company> optionalCompany = companyRepository.findById(securityTestDTO.getCompanyId());
-        Optional<User> optionalUser = userRepository.findOneById(securityTestDTO.getUserId());
+
+        Optional<User> optionalUser = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
 
         double testScore = 0;
         int UnmarkedHighPriorityCount = 0;
@@ -65,7 +67,7 @@ public class SecurityTestServiceImpl implements SecurityTestService {
         securityTest.setSystemNo(securityTestDTO.getSystemNo());
         securityTest.company(optionalCompany.isPresent() ? optionalCompany.get():null);
         securityTest.setApplicationUser(optionalUser.isPresent() ? optionalUser.get() : null);
-        securityTest.setTestStatus("Completed");
+        securityTest.setTestStatus("COMPLETED");
 
 
 
@@ -118,10 +120,13 @@ public class SecurityTestServiceImpl implements SecurityTestService {
             securityTest.setTestDescription("Status Changed To Critcal Due To these "+sb.toString() + " unmarked high-priority cases" );
         } else if(percentage <= 20){
             securityTest.testStatus("CRITCAL");
+            securityTest.setTestDescription("Your security is too low!" );
         } else if (percentage <80) {
             securityTest.testStatus("MODERATE");
+            securityTest.setTestDescription("Your security settings are moderate." );
         } else{
             securityTest.testStatus("EXCELLENT");
+            securityTest.setTestDescription("Your security settings are excellent!" );
         }
         securityTest.setTestCheckLists(testCheckLists);
         SecurityTest response = securityTestRepository.save(securityTest);

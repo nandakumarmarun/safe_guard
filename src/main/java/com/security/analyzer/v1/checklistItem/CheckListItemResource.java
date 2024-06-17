@@ -33,7 +33,7 @@ public class CheckListItemResource {
     /**
      * {@code POST  /check-list-items} : Create a new checkListItem.
      *
-     * @param checkListItemUpdateDTO the checkListItem to create.
+     * @param checkListItemCreateDTO the checkListItem to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new checkListItem, or with status {@code 400 (Bad Request)} if the checkListItem has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
