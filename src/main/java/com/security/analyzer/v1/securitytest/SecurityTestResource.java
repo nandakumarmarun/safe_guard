@@ -5,11 +5,9 @@ import com.security.analyzer.v1.exceptions.BadRequestAlertException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
@@ -53,22 +51,22 @@ public class SecurityTestResource {
      * {@code PUT  /security-tests/:id} : Updates an existing securityTest.
      *
      * @param id the id of the securityTest to save.
-     * @param securityTest the securityTest to update.
+     * @param securityTestUpdateDTO the securityTest to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated securityTest,
      * or with status {@code 400 (Bad Request)} if the securityTest is not valid,
      * or with status {@code 500 (Internal Server Error)} if the securityTest couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<SecurityTest> updateSecurityTest(
+    public ResponseEntity<SecurityTestResponseDTO> updateSecurityTest(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody SecurityTest securityTest
+        @RequestBody SecurityTestUpdateDTO securityTestUpdateDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update SecurityTest : {}, {}", id, securityTest);
-        if (securityTest.getId() == null) {
+        log.debug("REST request to update SecurityTest : {}, {}", id, securityTestUpdateDTO);
+        if (securityTestUpdateDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, securityTest.getId())) {
+        if (!Objects.equals(id, securityTestUpdateDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -76,11 +74,8 @@ public class SecurityTestResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        securityTest = securityTestService.update(securityTest);
-//        return ResponseEntity.ok()
-//            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, securityTest.getId().toString()))
-//            .body(securityTest);
-        return null;
+        SecurityTestResponseDTO securityTestResponseDTO = securityTestService.update(securityTestUpdateDTO);
+        return ResponseEntity.ok().body(securityTestResponseDTO);
     }
 
 
@@ -107,11 +102,10 @@ public class SecurityTestResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the securityTest, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<SecurityTest> getSecurityTest(@PathVariable("id") Long id) {
+    public ResponseEntity<SecurityTestResponseDTO> getSecurityTest(@PathVariable("id") Long id) {
         log.debug("REST request to get SecurityTest : {}", id);
-        Optional<SecurityTest> securityTest = securityTestService.findOne(id);
-//        return ResponseUtil.wrapOrNotFound(securityTest);
-        return null;
+        SecurityTestResponseDTO securityTestResponseDTO = securityTestService.findOne(id);
+        return ResponseEntity.ok().body(securityTestResponseDTO);
     }
 
 

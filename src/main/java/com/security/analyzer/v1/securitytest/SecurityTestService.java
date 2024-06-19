@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service Interface for managing {@link com.security.analyzer.v1.securitytest.SecurityTest}.
@@ -21,10 +20,9 @@ public interface SecurityTestService {
     /**
      * Updates a securityTest.
      *
-     * @param securityTest the entity to update.
-     * @return the persisted entity.
+     * @param securityTestUpdateDTO@return the persisted entity.
      */
-    SecurityTest update(SecurityTest securityTest);
+    SecurityTestResponseDTO update(SecurityTestUpdateDTO securityTestUpdateDTO);
     /**
      * Get all the securityTests.
      *
@@ -46,7 +44,7 @@ public interface SecurityTestService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<SecurityTest> findOne(Long id);
+    SecurityTestResponseDTO findOne(Long id);
 
     /**
      * Delete the "id" securityTest.
