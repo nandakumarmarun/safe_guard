@@ -20,7 +20,7 @@ public class SecurityTestUpdateDTO {
     private String testStatus;
     private Double testScore;
     private String securityLevel;
-    private Set<TestCheckListUpdateDTO> testCheckListUpdateDTOS;
+    private Set<TestCheckListUpdateDTO> testCheckLists;
     private Long userId;
     private Long companyId;
     private Long companyName;

@@ -147,7 +147,10 @@ public class SecurityTestServiceImpl implements SecurityTestService {
         int UnmarkedHighPriorityCount = 0;
         StringBuilder sb = new StringBuilder("");
 
-        SecurityTest securityTest = new  SecurityTest();
+        Optional<SecurityTest> securityTestById = securityTestRepository.findById(securityTestUpdateDTO.getId());
+
+        SecurityTest securityTest = securityTestById.get();
+
         Set<TestCheckList> testCheckLists = new HashSet<>();
         securityTest.setId(securityTestUpdateDTO.getId());
         securityTest.setApplicationName(securityTestUpdateDTO.getApplicationName());
@@ -157,7 +160,7 @@ public class SecurityTestServiceImpl implements SecurityTestService {
         securityTest.setTestStatus("PROCESSING");
 
 
-        for(TestCheckListUpdateDTO testCheckListUpdateDTO : securityTestUpdateDTO.getTestCheckListUpdateDTOS()){
+        for(TestCheckListUpdateDTO testCheckListUpdateDTO : securityTestUpdateDTO.getTestCheckLists()){
             List<TestCheckListItem>  testCheckListItemDTOS  = new ArrayList<>();
             TestCheckList  testCheckList = new TestCheckList();
 
@@ -171,7 +174,7 @@ public class SecurityTestServiceImpl implements SecurityTestService {
                 testCheckList.setCheckList(optionalCheckList.get());
 
 
-                for (TestCheckListItemUpdateDTO testCheckListItemUpdateDTO : testCheckListUpdateDTO.getTestCheckListItemUpdateDTOS()){
+                for (TestCheckListItemUpdateDTO testCheckListItemUpdateDTO : testCheckListUpdateDTO.getTestCheckListItems()){
                     TestCheckListItem testCheckListItem = new TestCheckListItem();
                     Optional<CheckListItem> optionalCheckListItem = optionalCheckList.get().getCheckListItems()
                         .stream()
@@ -204,16 +207,16 @@ public class SecurityTestServiceImpl implements SecurityTestService {
         securityTest.testScore(percentage);
 
         if(UnmarkedHighPriorityCount > 0){
-            securityTest.testStatus("CRITCAL");
+            securityTest.setSecurityLevel(SecurityLevel.CRITICAL);
             securityTest.setTestDescription("Status Changed To Critcal Due To these "+sb.toString() + " unmarked high-priority cases" );
         } else if(percentage <= 20){
-            securityTest.testStatus("CRITCAL");
+            securityTest.setSecurityLevel(SecurityLevel.CRITICAL);
             securityTest.setTestDescription("Your security is too low!" );
         } else if (percentage <80) {
-            securityTest.testStatus("MODERATE");
+            securityTest.setSecurityLevel(SecurityLevel.MODERATE);
             securityTest.setTestDescription("Your security settings are moderate." );
         } else{
-            securityTest.testStatus("EXCELLENT");
+            securityTest.setSecurityLevel(SecurityLevel.EXCELLENT);
             securityTest.setTestDescription("Your security settings are excellent!" );
         }
         securityTest.setTestCheckLists(testCheckLists);
@@ -222,11 +225,10 @@ public class SecurityTestServiceImpl implements SecurityTestService {
         return securityTestResponseDTO;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<SecurityTest> findAll() {
-        log.debug("Request to get all SecurityTests");
+        log.debug("Request to get all SecurityTest");
         return securityTestRepository.findAll();
     }
 
@@ -248,6 +250,15 @@ public class SecurityTestServiceImpl implements SecurityTestService {
 
 
         return null;
+    }
+
+    @Override
+    public void UpdateStatus(Long id) {
+        Optional<SecurityTest> securityTestById = securityTestRepository.findById(id);
+        securityTestById.ifPresent(data->{
+            data.setTestStatus("COMPLETED");
+            SecurityTest save = securityTestRepository.save(data);
+        });
     }
 
     @Override

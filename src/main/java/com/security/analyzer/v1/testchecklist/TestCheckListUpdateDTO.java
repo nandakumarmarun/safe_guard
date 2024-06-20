@@ -14,6 +14,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class TestCheckListUpdateDTO {
     private Long id;
-    private Set<TestCheckListItemUpdateDTO> testCheckListItemUpdateDTOS;
+    private Set<TestCheckListItemUpdateDTO> testCheckListItems;
     private Long checkListId;
 }

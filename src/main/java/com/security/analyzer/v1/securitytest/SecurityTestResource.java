@@ -109,6 +109,15 @@ public class SecurityTestResource {
     }
 
 
+    @PutMapping("/update-status/{id}")
+    public void updateSecurityTestStatus(
+        @PathVariable(value = "id", required = false) final Long id
+    ) throws URISyntaxException {
+        log.debug("REST request to update SecurityTest : {}, {}", id);
+         securityTestService.UpdateStatus(id);
+    }
+
+
 
 
     /**

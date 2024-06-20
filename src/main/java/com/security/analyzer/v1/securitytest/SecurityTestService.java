@@ -47,6 +47,14 @@ public interface SecurityTestService {
     SecurityTestResponseDTO findOne(Long id);
 
     /**
+     * Get the "id" securityTest.
+     *
+     * @param id the id of the entity.
+     * @return the entity.
+     */
+    void UpdateStatus(Long id);
+
+    /**
      * Delete the "id" securityTest.
      *
      * @param id the id of the entity.
