@@ -27,6 +27,10 @@ public class UserDTO implements Serializable {
     public UserDTO(User user) {
         this.id = user.getId();
         this.login = user.getLogin();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.roles = user.getRoles().toString();
     }
 
 

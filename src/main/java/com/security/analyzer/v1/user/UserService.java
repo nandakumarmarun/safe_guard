@@ -14,4 +14,8 @@ public interface UserService {
 
     public Page<UserDTO> getAllPublicUsers(Pageable pageable);
 
+
+    UserDTO currentUser();
+
+
 }

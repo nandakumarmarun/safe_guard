@@ -4,7 +4,6 @@ import com.security.analyzer.v1.config.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,10 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Service class for managing users.
@@ -193,5 +189,16 @@ public class UserServiceImpl implements UserService {
                 log.debug("Deleting not activated user {}", user.getLogin());
                 userRepository.delete(user);
             });
+    }
+
+    @Override
+    public UserDTO currentUser() {
+        Optional<User> optionalUser = userRepository
+            .findByLogin(SecurityUtils.getCurrentUserLogin().get());
+        if(optionalUser.isPresent()){
+         UserDTO userDTO = new UserDTO(optionalUser.get());
+         return userDTO;
+        }
+        return null;
     }
 }

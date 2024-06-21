@@ -87,6 +87,19 @@ public class UserController {
 
 
     /**
+     * {@code GET /admin/users} : get all users with all the details - calling this are only allowed for the administrators.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
+     */
+    @GetMapping("/user/current-session")
+    public ResponseEntity<UserDTO> getAllUsers() {
+         UserDTO userDTO = userService.currentUser();
+        return ResponseEntity.ok(userDTO);
+    }
+
+
+
+    /**
      * {@code DELETE /admin/users/:login} : delete the "login" User.
      *
      * @param login the login of the user to delete.
