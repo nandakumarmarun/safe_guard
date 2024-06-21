@@ -9,6 +9,7 @@ import com.security.analyzer.v1.checklistItem.CheckListItemRepository;
 import com.security.analyzer.v1.company.Company;
 import com.security.analyzer.v1.company.CompanyRepository;
 import com.security.analyzer.v1.config.utils.SecurityUtils;
+import com.security.analyzer.v1.securitytest.chart.ChartDTO;
 import com.security.analyzer.v1.testchecklist.TestCheckList;
 import com.security.analyzer.v1.testchecklist.TestCheckListDTO;
 import com.security.analyzer.v1.testchecklist.TestCheckListUpdateDTO;
@@ -275,6 +276,22 @@ public class SecurityTestServiceImpl implements SecurityTestService {
                 return countedBySecurityLevel;
             }
         return 0;
+    }
+
+    @Override
+    public ChartDTO getChart() {
+       ChartDTO  chartDTO = new ChartDTO();
+        Optional<User> optionalUser = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
+        if(optionalUser.isPresent()){
+            long EXCELLENT = securityTestRepository.countBySecurityLevel(SecurityLevel.EXCELLENT, optionalUser.get().getId());
+            long MODERATE = securityTestRepository.countBySecurityLevel(SecurityLevel.MODERATE, optionalUser.get().getId());
+            long CRITICAL = securityTestRepository.countBySecurityLevel(SecurityLevel.CRITICAL, optionalUser.get().getId());
+            chartDTO.setSucessCount(EXCELLENT);
+            chartDTO.setModerateCount(MODERATE);
+            chartDTO.setFailedcount(CRITICAL);
+            return chartDTO;
+        }
+        return null;
     }
 
     public Page<SecurityTest> findAllWithEagerRelationships(Pageable pageable) {

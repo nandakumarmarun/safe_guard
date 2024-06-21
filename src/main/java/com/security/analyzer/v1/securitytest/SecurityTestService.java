@@ -1,6 +1,7 @@
 package com.security.analyzer.v1.securitytest;
 
 import com.security.analyzer.v1.Enum.SecurityLevel;
+import com.security.analyzer.v1.securitytest.chart.ChartDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,6 +35,8 @@ public interface SecurityTestService {
     List<SecurityTestResponseDTO> findAllTests();
 
     long countBySecurityLevel(SecurityLevel securityLevel);
+
+    ChartDTO getChart();
 
     List<SecurityTestResponseDTO> findAllTestslimited();
 

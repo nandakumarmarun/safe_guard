@@ -3,6 +3,7 @@ package com.security.analyzer.v1.securitytest;
 
 import com.security.analyzer.v1.Enum.SecurityLevel;
 import com.security.analyzer.v1.exceptions.BadRequestAlertException;
+import com.security.analyzer.v1.securitytest.chart.ChartDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,6 +133,12 @@ public class SecurityTestResource {
         log.debug("REST request to get all SecurityTests");
         return ResponseEntity.ok().body(securityTestService
             .countBySecurityLevel(SecurityLevel.valueOf(securityLevel)));
+    }
+
+    @GetMapping("/chart")
+    public ResponseEntity<ChartDTO> GetchartData() {
+        log.debug("REST request to get all SecurityTests");
+        return ResponseEntity.ok().body(securityTestService.getChart());
     }
 
 
