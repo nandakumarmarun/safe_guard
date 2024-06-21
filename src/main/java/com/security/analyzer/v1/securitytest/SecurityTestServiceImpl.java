@@ -232,6 +232,51 @@ public class SecurityTestServiceImpl implements SecurityTestService {
         return securityTestRepository.findAll();
     }
 
+    @Override
+    public List<SecurityTestResponseDTO> findAllTests() {
+        log.debug("Request to get all SecurityTest");
+        List< SecurityTestResponseDTO> securityTestResponseDTOS= new ArrayList<>();
+        Optional<User> optionalUser = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
+        if(optionalUser.isPresent()){
+            List<SecurityTest> all = securityTestRepository.findAllTest(optionalUser.get().getId());
+            all.forEach(data->{
+                SecurityTestResponseDTO securityTestResponseDTO =
+                    new SecurityTestResponseDTO(data);
+                securityTestResponseDTOS.add(securityTestResponseDTO);
+            });
+            return securityTestResponseDTOS;
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+
+    @Override
+    public List<SecurityTestResponseDTO> findAllTestslimited() {
+        log.debug("Request to get all SecurityTest");
+        List< SecurityTestResponseDTO> securityTestResponseDTOS= new ArrayList<>();
+        Optional<User> optionalUser = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
+        if(optionalUser.isPresent()){
+            List<SecurityTest> all = securityTestRepository.findAllWithToOneRelationshipsLimited(optionalUser.get().getId());
+            all.forEach(data->{
+                SecurityTestResponseDTO securityTestResponseDTO =
+                    new SecurityTestResponseDTO(data);
+                securityTestResponseDTOS.add(securityTestResponseDTO);
+            });
+            return securityTestResponseDTOS;
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public long countBySecurityLevel(SecurityLevel securityLevel) {
+        Optional<User> optionalUser = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
+            if(optionalUser.isPresent()){
+                long countedBySecurityLevel = securityTestRepository.countBySecurityLevel(securityLevel, optionalUser.get().getId());
+                return countedBySecurityLevel;
+            }
+        return 0;
+    }
+
     public Page<SecurityTest> findAllWithEagerRelationships(Pageable pageable) {
         return securityTestRepository.findAllWithEagerRelationships(pageable);
     }

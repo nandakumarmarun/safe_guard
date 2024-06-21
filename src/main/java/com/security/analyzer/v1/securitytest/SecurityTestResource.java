@@ -1,6 +1,7 @@
 package com.security.analyzer.v1.securitytest;
 
 
+import com.security.analyzer.v1.Enum.SecurityLevel;
 import com.security.analyzer.v1.exceptions.BadRequestAlertException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Service Interface for managing {@link com.security.analyzer.v1.securitytest.SecurityTest}.
@@ -107,6 +107,33 @@ public class SecurityTestResource {
         SecurityTestResponseDTO securityTestResponseDTO = securityTestService.findOne(id);
         return ResponseEntity.ok().body(securityTestResponseDTO);
     }
+
+
+    /**
+     * {@code GET  /security-tests} : get all the securityTests.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of securityTests in body.
+     */
+    @GetMapping("/ALL")
+    public ResponseEntity<List<SecurityTestResponseDTO>> getAllSecurityTest() {
+        log.debug("REST request to get all SecurityTests");
+        return ResponseEntity.ok().body(securityTestService.findAllTests());
+    }
+
+    @GetMapping("/10")
+    public ResponseEntity<List<SecurityTestResponseDTO>> getAllSecurityTestLimited() {
+        log.debug("REST request to get all SecurityTests");
+        return ResponseEntity.ok().body(securityTestService.findAllTestslimited());
+    }
+
+    @GetMapping("/count/{securityLevel}")
+    public ResponseEntity<Long> countExcellent(
+        @PathVariable(value = "securityLevel", required = false) final String securityLevel) {
+        log.debug("REST request to get all SecurityTests");
+        return ResponseEntity.ok().body(securityTestService
+            .countBySecurityLevel(SecurityLevel.valueOf(securityLevel)));
+    }
+
 
 
     @PutMapping("/update-status/{id}")

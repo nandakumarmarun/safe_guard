@@ -1,5 +1,6 @@
 package com.security.analyzer.v1.securitytest;
 
+import com.security.analyzer.v1.Enum.SecurityLevel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -29,6 +30,12 @@ public interface SecurityTestService {
      * @return the list of entities.
      */
     List<SecurityTest> findAll();
+
+    List<SecurityTestResponseDTO> findAllTests();
+
+    long countBySecurityLevel(SecurityLevel securityLevel);
+
+    List<SecurityTestResponseDTO> findAllTestslimited();
 
     /**
      * Get all the securityTests with eager load of many-to-many relationships.

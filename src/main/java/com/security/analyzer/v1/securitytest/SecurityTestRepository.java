@@ -1,5 +1,6 @@
 package com.security.analyzer.v1.securitytest;
 
+import com.security.analyzer.v1.Enum.SecurityLevel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -38,4 +39,15 @@ public interface SecurityTestRepository extends JpaRepository<SecurityTest, Long
 
     @Query("select securityTest from SecurityTest securityTest left join fetch securityTest.applicationUser where securityTest.id =:id")
     Optional<SecurityTest> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query("SELECT COUNT(securityTest) FROM SecurityTest securityTest where securityTest.securityLevel=?1 and securityTest.applicationUser.id=?2")
+    long countBySecurityLevel(SecurityLevel securityLevel, Long userid);
+
+    @Query(value = "SELECT * FROM security_test st WHERE st.application_user_id = ?1 ORDER BY st.id DESC LIMIT 10 ", nativeQuery = true)
+    List<SecurityTest> findAllWithToOneRelationshipsLimited(Long id);
+
+    @Query(value = "SELECT * FROM security_test st WHERE st.application_user_id = ?1", nativeQuery = true)
+    List<SecurityTest> findAllTest(Long id);
+
+
 }
