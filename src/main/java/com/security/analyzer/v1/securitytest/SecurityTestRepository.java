@@ -46,6 +46,12 @@ public interface SecurityTestRepository extends JpaRepository<SecurityTest, Long
     @Query(value = "SELECT * FROM security_test st WHERE st.application_user_id = ?1 ORDER BY st.id DESC LIMIT 10 ", nativeQuery = true)
     List<SecurityTest> findAllWithToOneRelationshipsLimited(Long id);
 
+    @Query(value = "SELECT * FROM security_test st WHERE st.application_user_id = ?1 ORDER BY st.id DESC LIMIT 10 ", nativeQuery = true)
+    List<SecurityTest> findAllByApplicationUserId(Long id);
+
+    @Query("SELECT st FROM SecurityTest st WHERE st.applicationUser.id = :userId ORDER BY st.id DESC")
+    List<SecurityTest> findTop10ByApplicationUserIdOrderByIdDesc(@Param("userId") Long userId);
+
     @Query(value = "SELECT * FROM security_test st WHERE st.application_user_id = ?1", nativeQuery = true)
     List<SecurityTest> findAllTest(Long id);
 

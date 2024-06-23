@@ -39,6 +39,8 @@ public class SecurityTestServiceImpl implements SecurityTestService {
 
     private final Logger log = LoggerFactory.getLogger(SecurityTestServiceImpl.class);
 
+    private final SecurityTestMapper securityTestMapper;
+
     private final SecurityTestRepository securityTestRepository;
 
     private final CheckListRepository checkListRepository;
@@ -257,10 +259,10 @@ public class SecurityTestServiceImpl implements SecurityTestService {
         List< SecurityTestResponseDTO> securityTestResponseDTOS= new ArrayList<>();
         Optional<User> optionalUser = userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().get());
         if(optionalUser.isPresent()){
-            List<SecurityTest> all = securityTestRepository.findAllWithToOneRelationshipsLimited(optionalUser.get().getId());
+            List<SecurityTest> all = securityTestRepository.findAllByApplicationUserId(optionalUser.get().getId());
             all.forEach(data->{
                 SecurityTestResponseDTO securityTestResponseDTO =
-                    new SecurityTestResponseDTO(data);
+                    securityTestMapper.securityTestToSecurityTestResponseDTO(data);
                 securityTestResponseDTOS.add(securityTestResponseDTO);
             });
             return securityTestResponseDTOS;
