@@ -1,5 +1,6 @@
 package com.security.analyzer.v1.config;
 
+import com.security.analyzer.v1.Enum.Roles;
 import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.security.SecurityUtil;
