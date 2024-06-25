@@ -31,7 +31,6 @@ public class SecurityTestResponseDTO {
 
 
     public SecurityTestResponseDTO(SecurityTest securityTest) {
-        this.id=securityTest.getId();
         this.applicationName = securityTest.getApplicationName();
         this.systemNo = securityTest.getSystemNo();
         this.department = securityTest.getDepartment();

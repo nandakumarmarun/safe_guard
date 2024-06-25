@@ -1,5 +1,7 @@
 package com.security.analyzer.v1.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.analyzer.v1.Enum.PriorityLevel;
 import com.security.analyzer.v1.Enum.SecurityLevel;
 import com.security.analyzer.v1.checklist.CheckList;
@@ -17,6 +19,7 @@ import com.security.analyzer.v1.testchecklist.TestCheckListResponseDTO;
 import com.security.analyzer.v1.testchecklist.TestCheckListUpdateDTO;
 import com.security.analyzer.v1.testchecklistitem.TestCheckListItem;
 import com.security.analyzer.v1.testchecklistitem.TestCheckListItemDTO;
+import com.security.analyzer.v1.testchecklistitem.TestCheckListItemResoponseDTO;
 import com.security.analyzer.v1.testchecklistitem.TestCheckListItemUpdateDTO;
 import com.security.analyzer.v1.user.User;
 import com.security.analyzer.v1.user.UserRepository;
@@ -110,31 +113,39 @@ public class TestServiceImpl implements TestService {
 
         List<Test> tests1 = testRepository.saveAll(tests);
 
-        Map<String, List<Test>> testMap = tests1.stream()
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String jsonString = objectMapper.writeValueAsString(tests1);
+            System.out.println(jsonString);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, List<Test>> testMap = tests1.parallelStream()
                 .collect(Collectors.groupingBy(Test::getTestID));
 
         for (Map.Entry<String, List<Test>> entry : testMap.entrySet()) {
             String testID = entry.getKey();
-            List<Test> testList = entry.getValue();
+            List<Test> testList = testMap.get(testID);
 
-            Map<Long, List<Test>> checklistMap = tests1.stream()
+            Map<Long, List<Test>> checklistMap = testList.parallelStream()
                     .collect(Collectors.groupingBy(Test::getCheckListId));
 
             for (Map.Entry<Long, List<Test>> entry2 : checklistMap.entrySet()) {
                 Long checklistID = entry2.getKey();
-                List<Test> checkList = entry.getValue();
-                Map<Long, List<Test>> checklistitemMap = tests1.stream()
+                List<Test> checkList  = checklistMap.get(checklistID);
+                Map<Long, List<Test>> checklistitemMap = checkList.parallelStream()
                         .collect(Collectors.groupingBy(Test::getCheckListId));
 
                 for (Map.Entry<Long, List<Test>> entry3 : checklistitemMap.entrySet()) {
                     Long checklistItemID  = entry3.getKey();
-                    List<Test> checklistitems = entry.getValue();
-
-
+                    List<Test> checklistitems = checklistitemMap.get(checklistItemID);
+                    for(Test test : checklistitems){
+                        TestCheckListItemResoponseDTO testCheckListItemResoponseDTO = new TestCheckListItemResoponseDTO();
+                        System.out.println(test.getCheckListId());
+                    }
                 }
-
             }
-
         }
 
 
