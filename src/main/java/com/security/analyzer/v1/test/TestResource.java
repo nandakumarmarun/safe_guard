@@ -80,16 +80,12 @@ public class TestResource {
 
     /**
      * {@code GET  /security-tests} : get all the securityTests.
-     *
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of securityTests in body.
+     ** @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of securityTests in body.
      */
     @GetMapping("")
-    public List<SecurityTest> getAllSecurityTests(
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
-    ) {
+    public  ResponseEntity<List<SecurityTestResponseDTO>> getAllSecurityTests() {
         log.debug("REST request to get all SecurityTests");
-        return securityTestService.findAll();
+        return ResponseEntity.ok().body(securityTestService.findAllByCompanyId());
     }
 
 
@@ -101,7 +97,7 @@ public class TestResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the securityTest, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<SecurityTestResponseDTO> getSecurityTest(@PathVariable("id") Long id) {
+    public ResponseEntity<SecurityTestResponseDTO> getSecurityTest(@PathVariable("id") String id) {
         log.debug("REST request to get SecurityTest : {}", id);
         SecurityTestResponseDTO securityTestResponseDTO = securityTestService.findOne(id);
         return ResponseEntity.ok().body(securityTestResponseDTO);
@@ -143,7 +139,7 @@ public class TestResource {
 
     @PutMapping("/update-status/{id}")
     public void updateSecurityTestStatus(
-        @PathVariable(value = "id", required = false) final Long id
+        @PathVariable(value = "id", required = false) final String id
     ) throws URISyntaxException {
         log.debug("REST request to update SecurityTest : {}, {}", id);
          securityTestService.UpdateStatus(id);

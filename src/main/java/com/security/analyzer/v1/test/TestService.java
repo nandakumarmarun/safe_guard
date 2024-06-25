@@ -34,7 +34,7 @@ public interface TestService {
      *
      * @return the list of entities.
      */
-    List<SecurityTest> findAll();
+    List<SecurityTestResponseDTO> findAllByCompanyId();
 
     List<SecurityTestResponseDTO> findAllTests();
 
@@ -58,7 +58,7 @@ public interface TestService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    SecurityTestResponseDTO findOne(Long id);
+    SecurityTestResponseDTO findOne(String id);
 
     /**
      * Get the "id" securityTest.
@@ -66,7 +66,7 @@ public interface TestService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    void UpdateStatus(Long id);
+    void UpdateStatus(String id);
 
     /**
      * Delete the "id" securityTest.

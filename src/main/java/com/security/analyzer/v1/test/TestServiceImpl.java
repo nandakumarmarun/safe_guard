@@ -11,6 +11,9 @@ import com.security.analyzer.v1.checklistItem.CheckListItemRepository;
 import com.security.analyzer.v1.company.Company;
 import com.security.analyzer.v1.company.CompanyRepository;
 import com.security.analyzer.v1.config.utils.SecurityUtils;
+import com.security.analyzer.v1.dashboard.Dashboard;
+import com.security.analyzer.v1.dashboard.DashboardMapper;
+import com.security.analyzer.v1.dashboard.DashboardRepository;
 import com.security.analyzer.v1.securitytest.SecurityTest;
 import com.security.analyzer.v1.securitytest.SecurityTestDTO;
 import com.security.analyzer.v1.securitytest.chart.ChartDTO;
@@ -52,6 +55,10 @@ public class TestServiceImpl implements TestService {
     private final CompanyRepository companyRepository;
 
     private final UserRepository userRepository;
+
+    private final DashboardMapper dashboardMapper;
+
+    private final DashboardRepository dashboardRepository;
 
 
     @Override
@@ -194,6 +201,8 @@ public class TestServiceImpl implements TestService {
             securityTestResponseDTO.setSecurityLevel(SecurityLevel.EXCELLENT.toString());
             securityTestResponseDTO.setDescription("Your security settings are excellent!" );
         }
+
+        dashboardRepository.save(dashboardMapper.TestToDashboard(securityTestResponseDTO));
         return securityTestResponseDTO;
     }
 
@@ -318,13 +327,104 @@ public class TestServiceImpl implements TestService {
             securityTestResponseDTO.setSecurityLevel(SecurityLevel.EXCELLENT.toString());
             securityTestResponseDTO.setDescription("Your security settings are excellent!" );
         }
+
+        Dashboard testToDashboard = dashboardMapper.ToDashboard(securityTestResponseDTO);
+        dashboardRepository.save(testToDashboard);
         return securityTestResponseDTO;
     }
 
 
     @Override
-    public List<SecurityTest> findAll() {
-        return null;
+    public List<SecurityTestResponseDTO> findAllByCompanyId() {
+        Optional<User> optionalUser = userRepository
+            .findByLogin(SecurityUtils.getCurrentUserLogin().orElse(null));
+
+        List<Test> tests1 = testRepository.findAllByApplicationUserId(optionalUser.get().getId());
+
+        Double total = checkListItemRepository.findsumofValue();
+
+        Map<String, List<Test>> testMap = tests1.parallelStream()
+            .collect(Collectors.groupingBy(Test::getTestID));
+
+        List<SecurityTestResponseDTO> securityTestResponseDTOs  =  new ArrayList<>();
+
+        for (Map.Entry<String, List<Test>> entry : testMap.entrySet()) {
+            double testScore = 0;
+            int UnmarkedHighPriorityCount = 0;
+            StringBuilder sb = new StringBuilder();
+            String testID = entry.getKey();
+            List<Test> testList = testMap.get(testID);
+            Map<Long, List<Test>> checklistMap = testList.parallelStream()
+                .collect(Collectors.groupingBy(Test::getCheckListId));
+            Test securityTest = testList.get(0);
+            SecurityTestResponseDTO securityTestResponseDTO = new SecurityTestResponseDTO();
+            securityTestResponseDTO.setApplicationName(securityTest.getApplicationName());
+            securityTestResponseDTO.setId(securityTest.getTestID());
+            securityTestResponseDTO.setCompanyId(securityTest.getCompany().getId());
+            securityTestResponseDTO.setSystemNo(securityTest.getSystemNo());
+            securityTestResponseDTO.setUserName(securityTest.getApplicationUser().getLogin());
+            securityTestResponseDTO.setUserId(securityTest.getApplicationUser().getId());
+            securityTestResponseDTO.setCompanyName(securityTest.getCompany().getCompanyName());
+            Set<TestCheckListResponseDTO> testCheckListResponseDTOS = new HashSet<>();
+            for (Map.Entry<Long, List<Test>> entry2 : checklistMap.entrySet()) {
+                Long checklistID = entry2.getKey();
+                List<Test> checkList  = checklistMap.get(checklistID);
+                Map<Long, List<Test>> checklistitemMap = checkList.parallelStream()
+                    .collect(Collectors.groupingBy(Test::getCheckListId));
+                TestCheckListResponseDTO testCheckListResponseDTO = new TestCheckListResponseDTO();
+                Test checklistDTO = checkList.get(0);
+                testCheckListResponseDTO.setCheckListId(checklistDTO.getCheckListId());
+                testCheckListResponseDTO.setChecklistName(checklistDTO.getCheckListName());
+                Set<TestCheckListItemResoponseDTO> testCheckListItemResoponseDTOS = new HashSet<>();
+                for (Map.Entry<Long, List<Test>> entry3 : checklistitemMap.entrySet()) {
+                    Long checklistItemId  = entry3.getKey();
+                    List<Test> checklistitems = checklistitemMap.get(checklistItemId);
+                    for(Test testCheckListItem : checklistitems){
+                        TestCheckListItemResoponseDTO testCheckListItemResoponseDTO =
+                            new TestCheckListItemResoponseDTO();
+                        testCheckListItemResoponseDTO.setId(testCheckListItem.getId());
+                        testCheckListItemResoponseDTO
+                            .setChecklistItemName(testCheckListItem.getChecklistitemName());
+                        testCheckListItemResoponseDTO.setValue(testCheckListItem.getValue());
+                        testCheckListItemResoponseDTO.setMarked(testCheckListItem.getMarked());
+                        testCheckListItemResoponseDTO.
+                            setChecklistitemId(testCheckListItem.getChecklistitemId());
+                        testCheckListItemResoponseDTO
+                            .setPriorityLevel(testCheckListItem.getPriorityLevel().toString());
+                        testCheckListItemResoponseDTOS.add(testCheckListItemResoponseDTO);
+                        if(testCheckListItem.getMarked()){
+                            testScore = testScore + testCheckListItem.getValue();
+                        }
+                        if(!testCheckListItem.getMarked()
+                            && testCheckListItem.getPriorityLevel().equals(PriorityLevel.HIGH)){
+                            sb.append(testCheckListItem.getPriorityLevel()).append(",");
+                            UnmarkedHighPriorityCount++;
+                        }
+                    }
+                }
+                testCheckListResponseDTO.setTestCheckListItemResoponseDTOS(testCheckListItemResoponseDTOS);
+                testCheckListResponseDTOS.add(testCheckListResponseDTO);
+            }
+            securityTestResponseDTO.setTestCheckListResponseDTOS(testCheckListResponseDTOS);
+            double percentage = (testScore/total)*100;
+            // Iterate over each checklist in the Test object
+            securityTestResponseDTO.setTestScore(percentage);
+            if(UnmarkedHighPriorityCount > 0){
+                securityTestResponseDTO.setSecurityLevel(SecurityLevel.CRITICAL.toString());
+                securityTestResponseDTO.setDescription("Status Changed To Critcal Due To these "+sb.toString() + " unmarked high-priority cases" );
+            } else if(percentage <= 20){
+                securityTestResponseDTO.setSecurityLevel(SecurityLevel.CRITICAL.toString());
+                securityTestResponseDTO.setDescription("Your security is too low!" );
+            } else if (percentage <80) {
+                securityTestResponseDTO.setSecurityLevel(SecurityLevel.MODERATE.toString());
+                securityTestResponseDTO.setDescription("Your security settings are moderate." );
+            } else{
+                securityTestResponseDTO.setSecurityLevel(SecurityLevel.EXCELLENT.toString());
+                securityTestResponseDTO.setDescription("Your security settings are excellent!" );
+            }
+            securityTestResponseDTOs.add(securityTestResponseDTO);
+        }
+        return securityTestResponseDTOs;
     }
 
     @Override
@@ -353,12 +453,101 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public SecurityTestResponseDTO findOne(Long id) {
-        return null;
+    public SecurityTestResponseDTO findOne(String id) {
+        log.debug("Request to Update SecurityTest : {}", id);
+
+        Optional<User> optionalUser = userRepository
+            .findByLogin(SecurityUtils.getCurrentUserLogin()
+                .orElse(null));
+
+        List<Test> allByTestID = testRepository.findAllByTestID(id);
+        double testScore = 0;
+        int UnmarkedHighPriorityCount = 0;
+        StringBuilder sb = new StringBuilder();
+
+        Map<String, List<Test>> testMap = allByTestID.parallelStream()
+            .collect(Collectors.groupingBy(Test::getTestID));
+
+        SecurityTestResponseDTO securityTestResponseDTO = new SecurityTestResponseDTO();
+        for (Map.Entry<String, List<Test>> entry : testMap.entrySet()) {
+            String testID = entry.getKey();
+            List<Test> testList = testMap.get(testID);
+            Map<Long, List<Test>> checklistMap = testList.parallelStream()
+                .collect(Collectors.groupingBy(Test::getCheckListId));
+            Test securityTest = testList.get(0);
+            securityTestResponseDTO.setApplicationName(securityTest.getApplicationName());
+            securityTestResponseDTO.setId(securityTest.getTestID());
+            securityTestResponseDTO.setCompanyId(securityTest.getCompany().getId());
+            securityTestResponseDTO.setSystemNo(securityTest.getSystemNo());
+            securityTestResponseDTO.setUserName(securityTest.getApplicationUser().getLogin());
+            securityTestResponseDTO.setUserId(securityTest.getApplicationUser().getId());
+            securityTestResponseDTO.setCompanyName(securityTest.getCompany().getCompanyName());
+            Set<TestCheckListResponseDTO> testCheckListResponseDTOS = new HashSet<>();
+            for (Map.Entry<Long, List<Test>> entry2 : checklistMap.entrySet()) {
+                Long checklistID = entry2.getKey();
+                List<Test> checkList  = checklistMap.get(checklistID);
+                Map<Long, List<Test>> checklistitemMap = checkList.parallelStream()
+                    .collect(Collectors.groupingBy(Test::getCheckListId));
+                TestCheckListResponseDTO testCheckListResponseDTO = new TestCheckListResponseDTO();
+                Test checklistDTO = checkList.get(0);
+                testCheckListResponseDTO.setCheckListId(checklistDTO.getCheckListId());
+                testCheckListResponseDTO.setChecklistName(checklistDTO.getCheckListName());
+                Set<TestCheckListItemResoponseDTO> testCheckListItemResoponseDTOS = new HashSet<>();
+                for (Map.Entry<Long, List<Test>> entry3 : checklistitemMap.entrySet()) {
+                    Long checklistItemId  = entry3.getKey();
+                    List<Test> checklistitems = checklistitemMap.get(checklistItemId);
+                    for(Test testCheckListItem : checklistitems){
+                        TestCheckListItemResoponseDTO testCheckListItemResoponseDTO =
+                            new TestCheckListItemResoponseDTO();
+                        testCheckListItemResoponseDTO.setId(testCheckListItem.getId());
+                        testCheckListItemResoponseDTO
+                            .setChecklistItemName(testCheckListItem.getChecklistitemName());
+                        testCheckListItemResoponseDTO.setValue(testCheckListItem.getValue());
+                        testCheckListItemResoponseDTO.setMarked(testCheckListItem.getMarked());
+                        testCheckListItemResoponseDTO.
+                            setChecklistitemId(testCheckListItem.getChecklistitemId());
+                        testCheckListItemResoponseDTO
+                            .setPriorityLevel(testCheckListItem.getPriorityLevel().toString());
+                        testCheckListItemResoponseDTOS.add(testCheckListItemResoponseDTO);
+                        if(testCheckListItem.getMarked()){
+                            testScore = testScore + testCheckListItem.getValue();
+                        }
+                        if(!testCheckListItem.getMarked()
+                            && testCheckListItem.getPriorityLevel().equals(PriorityLevel.HIGH)){
+                            sb.append(testCheckListItem.getPriorityLevel()).append(",");
+                            UnmarkedHighPriorityCount++;
+                        }
+                    }
+                }
+                testCheckListResponseDTO.setTestCheckListItemResoponseDTOS(testCheckListItemResoponseDTOS);
+                testCheckListResponseDTOS.add(testCheckListResponseDTO);
+            }
+            securityTestResponseDTO.setTestCheckListResponseDTOS(testCheckListResponseDTOS);
+        }
+
+
+        Double total = checkListItemRepository.findsumofValue();
+        double percentage = (testScore/total)*100;
+        // Iterate over each checklist in the Test object
+        securityTestResponseDTO.setTestScore(percentage);
+        if(UnmarkedHighPriorityCount > 0){
+            securityTestResponseDTO.setSecurityLevel(SecurityLevel.CRITICAL.toString());
+            securityTestResponseDTO.setDescription("Status Changed To Critcal Due To these "+sb.toString() + " unmarked high-priority cases" );
+        } else if(percentage <= 20){
+            securityTestResponseDTO.setSecurityLevel(SecurityLevel.CRITICAL.toString());
+            securityTestResponseDTO.setDescription("Your security is too low!" );
+        } else if (percentage <80) {
+            securityTestResponseDTO.setSecurityLevel(SecurityLevel.MODERATE.toString());
+            securityTestResponseDTO.setDescription("Your security settings are moderate." );
+        } else{
+            securityTestResponseDTO.setSecurityLevel(SecurityLevel.EXCELLENT.toString());
+            securityTestResponseDTO.setDescription("Your security settings are excellent!" );
+        }
+        return securityTestResponseDTO;
     }
 
     @Override
-    public void UpdateStatus(Long id) {
+    public void UpdateStatus(String id) {
 
     }
 
@@ -366,4 +555,7 @@ public class TestServiceImpl implements TestService {
     public void delete(Long id) {
 
     }
+
+
+
 }
