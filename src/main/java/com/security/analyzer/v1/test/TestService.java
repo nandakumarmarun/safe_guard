@@ -3,8 +3,6 @@ package com.security.analyzer.v1.test;
 import com.security.analyzer.v1.Enum.SecurityLevel;
 import com.security.analyzer.v1.securitytest.SecurityTest;
 import com.security.analyzer.v1.securitytest.SecurityTestDTO;
-import com.security.analyzer.v1.securitytest.SecurityTestResponseDTO;
-import com.security.analyzer.v1.securitytest.SecurityTestUpdateDTO;
 import com.security.analyzer.v1.securitytest.chart.ChartDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +27,8 @@ public interface TestService {
      * @param securityTestUpdateDTO@return the persisted entity.
      */
     SecurityTestResponseDTO update(SecurityTestUpdateDTO securityTestUpdateDTO);
+
+
     /**
      * Get all the securityTests.
      *

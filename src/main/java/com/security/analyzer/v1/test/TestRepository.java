@@ -17,7 +17,7 @@ import java.util.Optional;
 @Repository
 public interface TestRepository extends JpaRepository<Test, Long> {
 
-
+    List<Test> findAllByTestID(String testId);
 
 
 }

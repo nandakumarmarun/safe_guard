@@ -58,7 +58,7 @@ public class Test {
     private Boolean marked;
 
     @Column(name = "check_list_itemId")
-    private long  checklistitemId;
+    private Long  checklistitemId;
 
     @Column(name = "check_list_item_name")
     private String checklistitemName;

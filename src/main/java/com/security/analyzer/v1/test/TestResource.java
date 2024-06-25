@@ -3,7 +3,8 @@ package com.security.analyzer.v1.test;
 
 import com.security.analyzer.v1.Enum.SecurityLevel;
 import com.security.analyzer.v1.exceptions.BadRequestAlertException;
-import com.security.analyzer.v1.securitytest.*;
+import com.security.analyzer.v1.securitytest.SecurityTest;
+import com.security.analyzer.v1.securitytest.SecurityTestDTO;
 import com.security.analyzer.v1.securitytest.chart.ChartDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class TestResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<SecurityTestResponseDTO> updateSecurityTest(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) String id,
         @RequestBody SecurityTestUpdateDTO securityTestUpdateDTO
     ) throws URISyntaxException {
         log.debug("REST request to update SecurityTest : {}, {}", id, securityTestUpdateDTO);
@@ -71,11 +72,7 @@ public class TestResource {
         if (!Objects.equals(id, securityTestUpdateDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
-        if (!securityTestRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
+        securityTestUpdateDTO.setId(id);
         SecurityTestResponseDTO securityTestResponseDTO = securityTestService.update(securityTestUpdateDTO);
         return ResponseEntity.ok().body(securityTestResponseDTO);
     }
