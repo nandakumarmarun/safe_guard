@@ -206,6 +206,7 @@ public class TestServiceImpl implements TestService {
         return securityTestResponseDTO;
     }
 
+
     @Override
     public SecurityTestResponseDTO update(SecurityTestUpdateDTO securityTestUpdateDTO) {
         log.debug("Request to Update SecurityTest : {}", securityTestUpdateDTO);
@@ -333,7 +334,6 @@ public class TestServiceImpl implements TestService {
         return securityTestResponseDTO;
     }
 
-
     @Override
     public List<SecurityTestResponseDTO> findAllByCompanyId() {
         Optional<User> optionalUser = userRepository
@@ -427,30 +427,6 @@ public class TestServiceImpl implements TestService {
         return securityTestResponseDTOs;
     }
 
-    @Override
-    public List<SecurityTestResponseDTO> findAllTests() {
-        return null;
-    }
-
-    @Override
-    public long countBySecurityLevel(SecurityLevel securityLevel) {
-        return 0;
-    }
-
-    @Override
-    public ChartDTO getChart() {
-        return null;
-    }
-
-    @Override
-    public List<SecurityTestResponseDTO> findAllTestslimited() {
-        return null;
-    }
-
-    @Override
-    public Page<SecurityTest> findAllWithEagerRelationships(Pageable pageable) {
-        return null;
-    }
 
     @Override
     public SecurityTestResponseDTO findOne(String id) {
@@ -546,16 +522,10 @@ public class TestServiceImpl implements TestService {
         return securityTestResponseDTO;
     }
 
-    @Override
-    public void UpdateStatus(String id) {
-
-    }
 
     @Override
     public void delete(Long id) {
 
     }
-
-
 
 }

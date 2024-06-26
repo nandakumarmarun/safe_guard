@@ -36,21 +36,6 @@ public interface TestService {
      */
     List<SecurityTestResponseDTO> findAllByCompanyId();
 
-    List<SecurityTestResponseDTO> findAllTests();
-
-    long countBySecurityLevel(SecurityLevel securityLevel);
-
-    ChartDTO getChart();
-
-    List<SecurityTestResponseDTO> findAllTestslimited();
-
-    /**
-     * Get all the securityTests with eager load of many-to-many relationships.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<SecurityTest> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Get the "id" securityTest.
@@ -66,7 +51,7 @@ public interface TestService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    void UpdateStatus(String id);
+
 
     /**
      * Delete the "id" securityTest.

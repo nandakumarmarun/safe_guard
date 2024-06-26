@@ -41,6 +41,9 @@ public class Dashboard {
     @Column(name = "security_level")
     private SecurityLevel securityLevel;
 
+    @Column(name = "system_no")
+    private Integer systemNo;
+
     private Long userId;
 
     private String userName;

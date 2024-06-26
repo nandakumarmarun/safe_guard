@@ -28,7 +28,7 @@ public class TestResource {
 
     private static final String ENTITY_NAME = "securityTest";
 
-    private final TestService securityTestService;
+    private final TestService testService;
 
     private final TestRepository securityTestRepository;
 
@@ -43,7 +43,7 @@ public class TestResource {
     public ResponseEntity<SecurityTestResponseDTO> createSecurityTest(
         @RequestBody SecurityTestDTO securityTest) throws URISyntaxException {
         log.debug("REST request to save SecurityTest : {}", securityTest);
-        SecurityTestResponseDTO securityTestResponseDTO = securityTestService.save(securityTest);
+        SecurityTestResponseDTO securityTestResponseDTO = testService.save(securityTest);
         return ResponseEntity.ok().body(securityTestResponseDTO);
     }
 
@@ -73,7 +73,7 @@ public class TestResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
         securityTestUpdateDTO.setId(id);
-        SecurityTestResponseDTO securityTestResponseDTO = securityTestService.update(securityTestUpdateDTO);
+        SecurityTestResponseDTO securityTestResponseDTO = testService.update(securityTestUpdateDTO);
         return ResponseEntity.ok().body(securityTestResponseDTO);
     }
 
@@ -85,7 +85,7 @@ public class TestResource {
     @GetMapping("")
     public  ResponseEntity<List<SecurityTestResponseDTO>> getAllSecurityTests() {
         log.debug("REST request to get all SecurityTests");
-        return ResponseEntity.ok().body(securityTestService.findAllByCompanyId());
+        return ResponseEntity.ok().body(testService.findAllByCompanyId());
     }
 
 
@@ -99,52 +99,9 @@ public class TestResource {
     @GetMapping("/{id}")
     public ResponseEntity<SecurityTestResponseDTO> getSecurityTest(@PathVariable("id") String id) {
         log.debug("REST request to get SecurityTest : {}", id);
-        SecurityTestResponseDTO securityTestResponseDTO = securityTestService.findOne(id);
+        SecurityTestResponseDTO securityTestResponseDTO = testService.findOne(id);
         return ResponseEntity.ok().body(securityTestResponseDTO);
     }
-
-
-    /**
-     * {@code GET  /security-tests} : get all the securityTests.
-     *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of securityTests in body.
-     */
-    @GetMapping("/ALL")
-    public ResponseEntity<List<SecurityTestResponseDTO>> getAllSecurityTest() {
-        log.debug("REST request to get all SecurityTests");
-        return ResponseEntity.ok().body(securityTestService.findAllTests());
-    }
-
-    @GetMapping("/10")
-    public ResponseEntity<List<SecurityTestResponseDTO>> getAllSecurityTestLimited() {
-        log.debug("REST request to get all SecurityTests");
-        return ResponseEntity.ok().body(securityTestService.findAllTestslimited());
-    }
-
-    @GetMapping("/count/{securityLevel}")
-    public ResponseEntity<Long> countExcellent(
-        @PathVariable(value = "securityLevel", required = false) final String securityLevel) {
-        log.debug("REST request to get all SecurityTests");
-        return ResponseEntity.ok().body(securityTestService
-            .countBySecurityLevel(SecurityLevel.valueOf(securityLevel)));
-    }
-
-    @GetMapping("/chart")
-    public ResponseEntity<ChartDTO> GetchartData() {
-        log.debug("REST request to get all SecurityTests");
-        return ResponseEntity.ok().body(securityTestService.getChart());
-    }
-
-
-
-    @PutMapping("/update-status/{id}")
-    public void updateSecurityTestStatus(
-        @PathVariable(value = "id", required = false) final String id
-    ) throws URISyntaxException {
-        log.debug("REST request to update SecurityTest : {}, {}", id);
-         securityTestService.UpdateStatus(id);
-    }
-
 
 
 
@@ -157,7 +114,7 @@ public class TestResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSecurityTest(@PathVariable("id") Long id) {
         log.debug("REST request to delete SecurityTest : {}", id);
-        securityTestService.delete(id);
+        testService.delete(id);
 //        return ResponseEntity.noContent()
 //            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
 //            .build();
