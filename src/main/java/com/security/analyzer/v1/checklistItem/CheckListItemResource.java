@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -48,6 +49,26 @@ public class CheckListItemResource {
         }
         return ResponseEntity.badRequest().body(null);
     }
+
+    /**
+     * {@code POST  /check-list-items} : Create a new checkListItem.
+     *
+     * @param multiCheckLisItemCreatetDTO the checkListItem to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new checkListItem, or with status {@code 400 (Bad Request)} if the checkListItem has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/multi-check-list-items")
+    public ResponseEntity<CheckListResponseDTO> createCheckMultipleListItem(
+            @RequestBody MultiCheckLisItemCreatetDTO multiCheckLisItemCreatetDTO) throws URISyntaxException {
+        log.debug("REST request to save CheckListItem : {}", multiCheckLisItemCreatetDTO);
+        CheckListResponseDTO checkListResponseDTO = checkListItemService.save(multiCheckLisItemCreatetDTO);
+        if(checkListResponseDTO.getId() !=  null){
+            return ResponseEntity.created(new URI("/api/check-list-items/" + checkListResponseDTO.getId()))
+                    .body(checkListResponseDTO);
+        }
+        return ResponseEntity.badRequest().body(null);
+    }
+
     /**
      * {@code PUT  /check-list-items/:id} : Updates an existing checkListItem.
      *

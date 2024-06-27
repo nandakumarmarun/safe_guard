@@ -56,6 +56,29 @@ public class CheckListItemServiceImpl implements CheckListItemService {
     }
 
     @Override
+    public CheckListResponseDTO save(MultiCheckLisItemCreatetDTO checkListItemCreateDTOs) {
+        Optional<CheckList> optionalCheckList = checkListRepository
+                .findById(checkListItemCreateDTOs.getCheckListId());
+
+        for(CheckListItemCreateDTO checkListItemCreateDTO :
+                checkListItemCreateDTOs.getCheckListItemCreateDTO()){
+
+            CheckListItem checkListItem = checkListItemMapper
+                    .checkListitemCreateDTOToCheckListItem(checkListItemCreateDTO);
+
+            if(optionalCheckList.isPresent()) {
+                optionalCheckList
+                        .get()
+                        .getCheckListItems()
+                        .add(checkListItem);
+            }
+        }
+        return checkListMapper
+                .checkListToCheckListResponseDTO(checkListRepository
+                        .save(optionalCheckList.get()));
+    }
+
+    @Override
     public CheckListItemResposeDTO update(CheckListItemUpdateDTO checkListItemUpdateDTO) {
         log.debug("Request to update CheckListItem : {}", checkListItemUpdateDTO);
         checkListItemMapper.checkListitemUpdateDTOToCheckListItem(checkListItemUpdateDTO);

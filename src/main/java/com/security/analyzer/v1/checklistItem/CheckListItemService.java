@@ -16,6 +16,8 @@ public interface CheckListItemService {
      */
     CheckListResponseDTO save(CheckListItemCreateDTO checkListItemCreateDTO);
 
+    CheckListResponseDTO save(MultiCheckLisItemCreatetDTO multiCheckLisItemCreatetDTO);
+
     /**
      * Updates a checkListItem.
      *

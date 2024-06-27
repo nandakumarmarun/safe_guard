@@ -360,6 +360,7 @@ public class TestServiceImpl implements TestService {
             SecurityTestResponseDTO securityTestResponseDTO = new SecurityTestResponseDTO();
             securityTestResponseDTO.setApplicationName(securityTest.getApplicationName());
             securityTestResponseDTO.setId(securityTest.getTestID());
+            securityTestResponseDTO.setTestStatus(securityTest.getTestStatus());
             securityTestResponseDTO.setCompanyId(securityTest.getCompany().getId());
             securityTestResponseDTO.setSystemNo(securityTest.getSystemNo());
             securityTestResponseDTO.setUserName(securityTest.getApplicationUser().getLogin());
@@ -453,6 +454,7 @@ public class TestServiceImpl implements TestService {
             Test securityTest = testList.get(0);
             securityTestResponseDTO.setApplicationName(securityTest.getApplicationName());
             securityTestResponseDTO.setId(securityTest.getTestID());
+            securityTestResponseDTO.setTestStatus(securityTest.getTestStatus());
             securityTestResponseDTO.setCompanyId(securityTest.getCompany().getId());
             securityTestResponseDTO.setSystemNo(securityTest.getSystemNo());
             securityTestResponseDTO.setUserName(securityTest.getApplicationUser().getLogin());
