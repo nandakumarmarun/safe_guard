@@ -311,7 +311,10 @@ public class TestServiceImpl implements TestService {
         }
 
 
-        Double total = checkListItemRepository.findsumofValue();
+        Double total = tests.stream()
+            .mapToDouble(Test::getValue)
+            .sum();
+//        Double total = checkListItemRepository.findsumofValue();
         double percentage = (testScore/total)*100;
         // Iterate over each checklist in the Test object
         securityTestResponseDTO.setTestScore(percentage);
@@ -341,7 +344,7 @@ public class TestServiceImpl implements TestService {
 
         List<Test> tests1 = testRepository.findAllByApplicationUserId(optionalUser.get().getId());
 
-        Double total = checkListItemRepository.findsumofValue();
+//        Double total = checkListItemRepository.findsumofValue();
 
         Map<String, List<Test>> testMap = tests1.parallelStream()
             .collect(Collectors.groupingBy(Test::getTestID));
@@ -351,6 +354,7 @@ public class TestServiceImpl implements TestService {
         for (Map.Entry<String, List<Test>> entry : testMap.entrySet()) {
             double testScore = 0;
             int UnmarkedHighPriorityCount = 0;
+            Double total = 0.0;
             StringBuilder sb = new StringBuilder();
             String testID = entry.getKey();
             List<Test> testList = testMap.get(testID);
@@ -393,6 +397,7 @@ public class TestServiceImpl implements TestService {
                         testCheckListItemResoponseDTO
                             .setPriorityLevel(testCheckListItem.getPriorityLevel().toString());
                         testCheckListItemResoponseDTOS.add(testCheckListItemResoponseDTO);
+                        total = total + testCheckListItem.getValue();
                         if(testCheckListItem.getMarked()){
                             testScore = testScore + testCheckListItem.getValue();
                         }
@@ -504,7 +509,10 @@ public class TestServiceImpl implements TestService {
         }
 
 
-        Double total = checkListItemRepository.findsumofValue();
+        Double total = allByTestID.stream()
+            .mapToDouble(Test::getValue)
+            .sum();
+//        Double total = checkListItemRepository.findsumofValue();
         double percentage = (testScore/total)*100;
         // Iterate over each checklist in the Test object
         securityTestResponseDTO.setTestScore(percentage);
