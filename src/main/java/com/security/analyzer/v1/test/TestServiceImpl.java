@@ -171,7 +171,7 @@ public class TestServiceImpl implements TestService {
                         }
                         if(!testCheckListItem.getMarked()
                                 && testCheckListItem.getPriorityLevel().equals(PriorityLevel.HIGH)){
-                            sb.append(testCheckListItem.getPriorityLevel()).append(",");
+                            sb.append(testCheckListItem.getChecklistitemName()).append(",");
                             UnmarkedHighPriorityCount++;
                         }
                     }
@@ -398,7 +398,7 @@ public class TestServiceImpl implements TestService {
                         }
                         if(!testCheckListItem.getMarked()
                             && testCheckListItem.getPriorityLevel().equals(PriorityLevel.HIGH)){
-                            sb.append(testCheckListItem.getPriorityLevel()).append(",");
+                            sb.append(testCheckListItem.getChecklistitemName()).append(",");
                             UnmarkedHighPriorityCount++;
                         }
                     }
