@@ -7,6 +7,7 @@ import com.security.analyzer.v1.district.District;
 import com.security.analyzer.v1.location.Location;
 import com.security.analyzer.v1.securitytest.SecurityTest;
 import com.security.analyzer.v1.state.State;
+import com.security.analyzer.v1.user.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -64,6 +65,9 @@ public class Company implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "district", "state", "city" }, allowSetters = true)
     private Location location;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -192,6 +196,14 @@ public class Company implements Serializable {
     public Company location(Location location) {
         this.setLocation(location);
         return this;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

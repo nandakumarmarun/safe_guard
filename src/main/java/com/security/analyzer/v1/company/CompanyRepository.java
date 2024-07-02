@@ -42,4 +42,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
         "select company from Company company left join fetch company.country left join fetch company.state left join fetch company.district left join fetch company.city left join fetch company.location where company.id =:id"
     )
     Optional<Company> findOneWithToOneRelationships(@Param("id") Long id);
+
+
+
+    List<Company> findAllByUserId(Long id);
 }

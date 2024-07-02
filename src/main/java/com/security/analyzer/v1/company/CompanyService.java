@@ -34,6 +34,8 @@ public interface CompanyService {
      */
     List<CompanyReponseDTO> findAll();
 
+    List<CompanyReponseDTO> findAllByUserId();
+
     /**
      * Get all the companies with eager load of many-to-many relationships.
      *

@@ -1,6 +1,9 @@
 package com.security.analyzer.v1.company;
 
 
+import com.security.analyzer.v1.config.utils.SecurityUtils;
+import com.security.analyzer.v1.user.User;
+import com.security.analyzer.v1.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,11 +30,18 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyMapper companyMapper;
 
+    private final UserRepository userRepository;
+
 
     @Override
     public CompanyReponseDTO save(CompanyRequestDTO companyRequestDTO) {
         log.debug("Request to save Company : {}", companyRequestDTO);
         Company company = companyMapper.CompanyRequestDTOtoCompany(companyRequestDTO);
+        Optional<User> optionalUser = userRepository
+            .findByLogin(SecurityUtils.getCurrentUserLogin().orElse(null));
+        if(optionalUser.isPresent()){
+            company.setUser(optionalUser.get());
+        }
         Company reponse = companyRepository.save(company);
         CompanyReponseDTO companyReponseDTO = companyMapper.CompanytoCompanyReponseDTO(reponse);
         return companyReponseDTO;
@@ -55,6 +66,23 @@ public class CompanyServiceImpl implements CompanyService {
             companyMapper.CompanyListoCompanyReponseDTOList(companyList);
         return companyReponseDTOList;
     }
+
+
+
+    public List<CompanyReponseDTO> findAllByUserId() {
+        log.debug("Request to get all Companies");
+
+        Optional<User> optionalUser = userRepository
+            .findByLogin(SecurityUtils.getCurrentUserLogin().orElse(null));
+        if(optionalUser.isPresent()){
+            List<Company> companyList = companyRepository.findAllByUserId(optionalUser.get().getId());
+            List<CompanyReponseDTO> companyReponseDTOList =
+                companyMapper.CompanyListoCompanyReponseDTOList(companyList);
+            return companyReponseDTOList;
+        }
+        return Collections.emptyList();
+    }
+
 
     public Page<Company> findAllWithEagerRelationships(Pageable pageable) {
         return companyRepository.findAllWithEagerRelationships(pageable);

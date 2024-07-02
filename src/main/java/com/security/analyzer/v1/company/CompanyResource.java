@@ -66,7 +66,7 @@ public class CompanyResource {
     @GetMapping("")
     public ResponseEntity<List<CompanyReponseDTO>> getAllCompanies() {
         log.debug("REST request to get all Companies");
-        List<CompanyReponseDTO> companyReponseDTOList = companyService.findAll();
+        List<CompanyReponseDTO> companyReponseDTOList = companyService.findAllByUserId();
         return ResponseEntity.ok().body(companyReponseDTOList);
     }
     /**
