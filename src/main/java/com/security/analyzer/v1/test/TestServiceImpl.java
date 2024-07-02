@@ -343,6 +343,7 @@ public class TestServiceImpl implements TestService {
             .findByLogin(SecurityUtils.getCurrentUserLogin().orElse(null));
 
         List<Test> tests1 = testRepository.findAllByApplicationUserId(optionalUser.get().getId());
+        List<Dashboard> dashboards = dashboardRepository.findAllTest(optionalUser.get().getId());
 
 //        Double total = checkListItemRepository.findsumofValue();
 
@@ -363,8 +364,13 @@ public class TestServiceImpl implements TestService {
             Test securityTest = testList.get(0);
             SecurityTestResponseDTO securityTestResponseDTO = new SecurityTestResponseDTO();
             securityTestResponseDTO.setApplicationName(securityTest.getApplicationName());
+            Optional<Dashboard> result = dashboards.stream()
+                .filter(dashboard -> dashboard.getTestID().equals(securityTest.getTestID()))
+                .findFirst();
+            if(result.isPresent()){
+                securityTestResponseDTO.setTestStatus(result.get().getTestStatus());
+            }
             securityTestResponseDTO.setId(securityTest.getTestID());
-            securityTestResponseDTO.setTestStatus(securityTest.getTestStatus());
             securityTestResponseDTO.setCompanyId(securityTest.getCompany().getId());
             securityTestResponseDTO.setSystemNo(securityTest.getSystemNo());
             securityTestResponseDTO.setUserName(securityTest.getApplicationUser().getLogin());
